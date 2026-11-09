@@ -56,8 +56,24 @@ export function findPost(site: SiteData, slug: string): BlogPost | undefined {
 export function findVideo(site: SiteData, slug: string): VideoItem | undefined {
   return site.videos.find((v) => v.slug === slug);
 }
+/** One line per (position, component). Guards against duplicate rows if a seed script was run twice. */
+export function uniqueCostLines(lines: CostLine[]): CostLine[] {
+  const seen = new Set<string>();
+  return lines
+    .filter((l) => {
+      const key = `${l.position}|${l.component}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => a.position - b.position);
+}
+
+/** Cost lines for a city page. A city with no lines of its own shows the national lines (same figures until local quotes exist). */
 export function costLines(site: SiteData, treatmentSlug: string, citySlug: string | null): CostLine[] {
-  return site.costs.filter((c) => c.treatmentSlug === treatmentSlug && c.citySlug === citySlug).sort((a, b) => a.position - b.position);
+  const pick = (city: string | null) => site.costs.filter((c) => c.treatmentSlug === treatmentSlug && c.citySlug === city);
+  const own = pick(citySlug);
+  return uniqueCostLines(own.length > 0 || citySlug === null ? own : pick(null));
 }
 export function faqsFor(site: SiteData, treatmentSlug: string, citySlug: string | null): FaqRow[] {
   return site.faqs
