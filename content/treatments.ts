@@ -1,5 +1,6 @@
 import type { Treatment } from "./types";
 import { gynecomastiaContent } from "./gynecomastia";
+import { liposuctionContent, liposuctionDisplay } from "./liposuction";
 
 // Phase 1: plastic and cosmetic surgery. Only gynecomastia has full editorial content so far;
 // the others render as short, noindex "being prepared" pages until a reviewer signs off real copy.
@@ -48,26 +49,45 @@ export const treatments: Treatment[] = [
     reviewerId: null,
     published: false,
     content: gynecomastiaContent,
+    images: { hero: {}, operation: {}, recovery: {}, card: {} },
   },
-  stub({
+  {
     slug: "liposuction",
     name: "Liposuction",
     menuName: "Liposuction",
-    summary: "Removes fat from areas such as chest, abdomen and flanks; often part of a gynecomastia plan.",
+    alternateName: "Body contouring",
+    summary: "Removes stubborn pockets of fat from areas such as the abdomen, flanks, thighs, arms, chest and chin. Not a weight-loss treatment.",
     procedure: {
       procedureType: "https://schema.org/SurgicalProcedure",
-      bodyLocation: "Chest, abdomen, flanks",
-      howPerformed: "Fat is suctioned out through tiny cuts.",
-      preparation: "Examination, medicine review and an anaesthesia fitness check.",
-      followup: "Compression garment and review visits.",
+      bodyLocation: "Abdomen, waist, thighs, hips, arms, back, chest, chin and neck",
+      howPerformed: "Fat is loosened and drawn out through tiny cuts with a thin tube, sometimes with ultrasound, power or laser assistance; a solution is often put into the fat first.",
+      preparation: "Examination by a surgeon, review of medicines, blood tests and an anaesthesia fitness check.",
+      followup: "Compression garment, a first review about three to five days later, more review visits, and a gradual return to exercise as the surgeon advises.",
     },
-    costFactors: [],
-    deskWork: "3 to 7 days",
-    cardBlurb: "Removes fat from areas such as chest, abdomen and flanks; often part of a gynecomastia plan.",
+    // Sample figure for one area, from one source. Other cases are on the cost page by area. No headline floor price.
+    nationalRange: { minInr: 60000, maxInr: 80000, validAsOf: "2026-11", isSample: true },
+    costFactors: [
+      { factor: "Areas treated", why: "The abdomen, flanks, thighs, arms, back, chest and chin differ in size, depth of fat and skin." },
+      { factor: "Number of areas", why: "Two or more areas take longer, need a bigger anaesthetic plan and usually cost more." },
+      { factor: "Technique", why: "Ultrasound-assisted and other equipment-based methods are priced differently from standard suction." },
+      { factor: "Amount of fat removed", why: "More fat means more time, and may mean a night in hospital." },
+      { factor: "Hospital charges", why: "A day-care centre and a multi-specialty hospital price theatre and rooms differently." },
+      { factor: "Anaesthesia", why: "General anaesthesia costs more than local with sedation." },
+      { factor: "Garments and follow-up", why: "Number of garments, and whether review visits are included or charged one by one." },
+      { factor: "A second operation", why: "Some quotes include a touch-up for a period, some charge in full." },
+    ],
+    deskWork: "About 1 to 2 weeks",
+    cardBlurb: "Removes stubborn fat from chosen areas. Not for weight loss.",
     icon: 1,
     related: ["gynecomastia-surgery", "tummy-tuck"],
-    readSlugs: [],
-  }),
+    readSlugs: ["liposuction-vs-weight-loss", "liposuction-recovery-timeline", "liposuction-body-areas"],
+    videoSlugs: [],
+    reviewerId: null,
+    published: false,
+    content: liposuctionContent,
+    display: liposuctionDisplay,
+    images: { hero: {}, operation: {}, recovery: {}, card: {} },
+  },
   stub({
     slug: "tummy-tuck",
     name: "Tummy tuck",
