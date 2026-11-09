@@ -3,6 +3,7 @@ import type { BlogPost, City, Treatment } from "@/content/types";
 import { inrRange } from "@/lib/format";
 import { isLinkVisible } from "@/lib/pages";
 import { ReadThumb1, ReadThumb2, ReadThumb3, TreatmentIcon1, TreatmentIcon2, TreatmentIcon3 } from "../illustrations/Plates";
+import { ImageSlot } from "../ui/ImageSlot";
 import { Rich } from "../ui/Rich";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
@@ -26,7 +27,7 @@ export function RelatedReads({ posts }: { posts: BlogPost[] }) {
               <div>
                 <h3><Link href={`/learn/${p.slug}`}>{p.title}</Link></h3>
                 <p>{p.excerpt}</p>
-                <p className="meta">{p.minutes} min read {!p.published && <SampleChip label="Draft" />}</p>
+                <p className="meta">{p.minutes} min read {(!p.published || !p.reviewerId || p.reviewerId.startsWith("sample")) && <SampleChip label="Pending review" />}</p>
               </div>
             </li>
           );
@@ -51,7 +52,7 @@ export function RelatedTreatments({ cards }: { cards: TreatmentCard[] }) {
           const Icon = icons[t.icon];
           return (
             <li key={t.slug}>
-              <div><Icon /></div>
+              <div><ImageSlot slot={t.images?.card} ratio="1 / 1" sizes="120px"><Icon /></ImageSlot></div>
               <div>
                 <h3><Link href={`/${t.slug}`}>{t.name}</Link></h3>
                 <p>{t.cardBlurb}</p>
