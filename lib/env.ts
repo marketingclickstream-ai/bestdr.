@@ -12,6 +12,9 @@ export const HAS_WHATSAPP = /^\d{11,15}$/.test(WHATSAPP_NUMBER);
 // Values pasted into a dashboard often carry spaces or quotes; strip them. The Vercel integration may
 // provide the key under the older (ANON_KEY) or the newer (PUBLISHABLE_KEY) name; either works.
 const clean = (v: string | undefined): string => (v ?? "").trim().replace(/^["']|["']$/g, "").trim();
+/** Chat widget script (optional). Loaded only after a visitor clicks "Chat with us" and agrees. Must be an https URL. */
+const chatSrc = (process.env.NEXT_PUBLIC_CHATBOT_SRC ?? "").trim();
+export const CHATBOT_SRC = /^https:\/\/[^\s]+$/.test(chatSrc) ? chatSrc : "";
 export const SUPABASE_URL = clean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL);
 export const SUPABASE_ANON_KEY = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 export const HAS_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
