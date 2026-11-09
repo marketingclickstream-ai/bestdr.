@@ -79,8 +79,31 @@ export function mapVideo(r: Row): VideoItem {
   };
 }
 
-export async function loadFromSupabase(): Promise<SiteData> {
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+/** Cache tag for every Supabase read. /api/revalidate clears it when content is published. */
+export const DATA_TAG = "site-data";
+const DATA_REVALIDATE_SECONDS = 300;
+
+/**
+ * Next.js keeps fetch results in a Data Cache that survives redeploys. Without care, a deploy made
+ * right after publishing rows can keep serving the older answer (for example "0 treatments") for up
+ * to the cache lifetime. Three guards:
+ *  - the cache key includes the deployment id (header), so every deployment starts with a clean cache;
+ *  - the entry lives 5 minutes, not an hour;
+ *  - the entry carries a tag that /api/revalidate can clear.
+ * fresh = true skips the cache entirely (used by /api/health).
+ */
+function dataFetch(fresh: boolean): typeof fetch {
+  const deployment = process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_GIT_COMMIT_SHA || "local";
+  return (input, init) => {
+    const headers = new Headers(init?.headers);
+    headers.set("x-site-deployment", deployment);
+    const cacheOpts = fresh ? { cache: "no-store" as const } : { next: { revalidate: DATA_REVALIDATE_SECONDS, tags: [DATA_TAG] } };
+    return fetch(input, { ...init, headers, ...cacheOpts });
+  };
+}
+
+export async function loadFromSupabase(opts: { fresh?: boolean } = {}): Promise<SiteData> {
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false }, global: { fetch: dataFetch(Boolean(opts.fresh)) } });
   const get = async (table: string, order?: string): Promise<Row[]> => {
     const q = db.from(table).select("*");
     const { data, error } = await (order ? q.order(order) : q);
