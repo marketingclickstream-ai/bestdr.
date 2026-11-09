@@ -1,0 +1,21 @@
+const cheerio=require('/home/claude/bestdoctorsin-site/node_modules/cheerio');
+const BASE=process.argv[2]||'http://localhost:3100';
+const routes=JSON.parse(require('fs').readFileSync('crawl.json')).routes;
+(async()=>{const rows=[];const titles={},descs={};
+for(const r of routes){const res=await fetch(BASE+r);const html=await res.text();const $=cheerio.load(html);
+ const title=$('head > title').text();const desc=$('meta[name=description]').attr('content')||'';const h1=$('h1');
+ const robots=$('meta[name=robots]').attr('content')||'';const canon=$('link[rel=canonical]').attr('href')||'';
+ const hl=$('link[rel=alternate][hreflang]').map((i,e)=>$(e).attr('hreflang')+'='+$(e).attr('href')).get();
+ const hs=$('h1,h2,h3,h4,h5,h6').map((i,e)=>+e.tagName[1]).get();let skip=[];for(let i=1;i<hs.length;i++)if(hs[i]-hs[i-1]>1)skip.push(`h${hs[i-1]}->h${hs[i]}`);
+ const imgs=$('img').map((i,e)=>({alt:$(e).attr('alt'),src:$(e).attr('src')})).get();
+ const noalt=imgs.filter(i=>i.alt===undefined);
+ const ld=[];let ldbad=[];$('script[type="application/ld+json"]').each((i,e)=>{try{ld.push(JSON.parse($(e).text()))}catch(er){ldbad.push(er.message)}});
+ const types=ld.flatMap(x=>x['@graph']?x['@graph']:[x]).map(x=>x['@type']);
+ const mainLinks=$('main a[href^="/"]').length;
+ (titles[title]=titles[title]||[]).push(r);(descs[desc]=descs[desc]||[]).push(r);
+ rows.push({r,tl:title.length,dl:desc.length,h1:h1.length,robots,canon:canon.replace('https://www.bestdoctorsin.com',''),canonOK:canon==='https://www.bestdoctorsin.com'+(r==='/'?'/':r),hl:hl.length,skip:skip.join(','),noalt:noalt.length,ldbad:ldbad.length,types:types.join('|'),lang:$('html').attr('lang'),og:$('meta[property="og:title"]').length,viewport:$('meta[name=viewport]').length});
+}
+for(const x of rows)console.log(JSON.stringify(x));
+console.log('DUP TITLES',Object.entries(titles).filter(([k,v])=>v.length>1));console.log('DUP DESCS',Object.entries(descs).filter(([k,v])=>v.length>1).map(([k,v])=>[k.slice(0,40),v]));
+console.log('TITLE>60',rows.filter(x=>x.tl>60).map(x=>x.r+':'+x.tl));console.log('DESC>160',rows.filter(x=>x.dl>160||x.dl<50).map(x=>x.r+':'+x.dl));console.log('H1!=1',rows.filter(x=>x.h1!==1).map(x=>x.r+':'+x.h1));
+})();
