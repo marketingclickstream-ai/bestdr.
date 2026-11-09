@@ -8,6 +8,38 @@ export type IllustrationKey = "chest-section" | "technique" | "tissue-types" | "
 export type PosterKey = "grades" | "recovery";
 export type ThumbKey = 1 | 2 | 3;
 
+/**
+ * One image slot (spec: 15-outrank-strategy/image-slots-spec.md). Until imageSrc is set the page shows its
+ * built-in SVG illustration. The file goes in public/images/ and imageSrc is its public path, e.g. "/images/lipo-hero.webp".
+ * credit is the licence or photographer note, kept for our records and shown as a caption line.
+ */
+export interface ImageSlotData {
+  imageSrc?: string;
+  imageAlt?: string;
+  credit?: string;
+  caption?: string;
+}
+
+/** Per-treatment wording and picture choices, so one template serves every treatment. Defaults match gynecomastia. */
+export interface TreatmentDisplay {
+  titleEm?: string;
+  heroPlate?: "chest" | "areas";
+  heroPlateCaption?: string;
+  operationHeading?: string;
+  operationPlate?: "technique" | "cannula";
+  operationCaptions?: { title: string; text: string }[];
+  recoveryHeading?: string;
+  /** Link target for "risks in more detail" on city pages. */
+  riskGuideHref?: string;
+  priceLabel?: string; // e.g. "One area, usual total bill"
+  priceLinkText?: string;
+  /** "sum": the lines add up to the range. "options": each line is a separate case with its own range. */
+  costMode?: "sum" | "options";
+  costHeading?: string;
+  costCaption?: string;
+  tocLabels?: { surgery?: string; choices?: string };
+}
+
 export interface Reviewer {
   id: string;
   name: string;
@@ -45,7 +77,8 @@ export interface TreatmentContent {
     how: string[];
     whoItSuits: { term: string; text: string }[];
   };
-  fatOrGland: {
+  /** Gynecomastia only: gland-vs-fat table, causes, grades. */
+  fatOrGland?: {
     lead: string;
     body: string;
     term: string;
@@ -56,6 +89,26 @@ export interface TreatmentContent {
     myths: string[];
     gradesCaption: string;
     grades: { grade: string; looks: string; approach: string }[];
+  };
+  /** Liposuction: areas, techniques and comparisons. */
+  areas?: {
+    lead: string;
+    body: string;
+    rows: { area: string; usual: string; depends: string }[];
+    note: string;
+  };
+  techniques?: {
+    lead: string;
+    rows: { name: string; how: string; often: string; ask: string }[];
+    note: string;
+  };
+  compare?: {
+    tummyTuckLead: string;
+    tummyTuck: { feature: string; lipo: string; tuck: string }[];
+    nonSurgicalLead: string;
+    nonSurgical: { name: string; text: string }[];
+    nonSurgicalNote: string;
+    whoShouldWait: string[];
   };
   recovery: {
     lead: string;
@@ -101,6 +154,9 @@ export interface Treatment {
   reviewerId: string | null;
   published: boolean;
   content: TreatmentContent | null;
+  display?: TreatmentDisplay;
+  /** Slots: hero, operation, recovery, card. */
+  images?: Record<string, ImageSlotData>;
 }
 
 export type CostSourceType = "partner_quote" | "price_list" | "patient_invoice" | "founder_published";
@@ -174,6 +230,10 @@ export interface CityTreatmentPage {
   beforeAfter: { imageId: string; consentId: string | null }[];
   /** Words written for this city only (used for the similarity check). */
   localCopy: string[];
+  /** Slot: travel (3:2 picture in the "Getting there" block). */
+  images?: Record<string, ImageSlotData>;
+  /** Short statement of what a patient here must know that the other cities do not cover (G13 text), shown as the "Local notes" block. */
+  localNotes?: { heading: string; text: string }[];
 }
 
 export interface FaqRow {
@@ -197,6 +257,10 @@ export interface BlogPost {
   published: boolean;
   datePublished: string;
   dateModified: string;
+  /** Slot: cover (16:9). */
+  cover?: ImageSlotData;
+  /** City slugs to link as next steps (strategy section 5). */
+  nextCities?: string[];
 }
 
 export interface VideoItem {
@@ -211,6 +275,8 @@ export interface VideoItem {
   youtubeId: string | null;
   uploadDate: string;
   isSample: boolean;
+  /** Slot: poster (16:9). */
+  posterImage?: ImageSlotData;
 }
 
 export interface SiteData {
