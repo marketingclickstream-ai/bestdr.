@@ -61,3 +61,20 @@ export function CallbackBand({ treatment, city }: { treatment: string; city: str
   );
 }
 
+
+/** Slim mid-page banner (marketing plan 4.1). One action, no form. Falls back to the call-back sheet without a WhatsApp number. */
+export function MidBanner({ id, heading, text, message, label = "Ask on WhatsApp" }: { id: string; heading: string; text: string; message: string; label?: string }) {
+  return (
+    <aside className="band soft mid" id={id} aria-labelledby={`${id}-h`}>
+      <div className="row two">
+        <div>
+          <h2 id={`${id}-h`}>{heading}</h2>
+          <p>{text}</p>
+        </div>
+        <div className="cta">
+          {waLink(message) ? <WhatsAppButton message={message}>{label}</WhatsAppButton> : <OpenLeadButton>Call me back</OpenLeadButton>}
+        </div>
+      </div>
+    </aside>
+  );
+}
