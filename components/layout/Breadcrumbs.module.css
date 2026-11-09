@@ -1,0 +1,4 @@
+.crumb{font-size:13px;color:var(--muted);margin:0 0 8px}.crumb a{color:var(--muted);display:inline-flex;align-items:center;min-height:44px}
+.crumb ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:0}
+.crumb li{display:inline-flex;align-items:center;min-height:32px}.crumb li:not(:last-child)::after{content:"/";margin:0 5px;color:var(--bds)}
+.crumb li{min-height:44px}

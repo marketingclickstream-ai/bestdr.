@@ -1,0 +1,20 @@
+/* Mobile menu panel. */
+.mp{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column}
+.mp[hidden]{display:none}
+.mpH{display:flex;align-items:center;justify-content:space-between;padding:6px var(--g);border-bottom:1px solid var(--p900);min-height:64px}
+.mpH :global(.lg){height:34px}
+.mpB{flex:1;overflow:auto;padding:14px var(--g) 18px}
+.mpS{margin:0 0 10px}.mpS label{display:block;font:600 14px var(--sans);color:var(--muted);margin-bottom:6px}
+.mpS input{width:100%;min-height:48px;border:1.5px solid var(--bds);border-radius:8px;padding:0 14px;font:400 16px var(--sans);background:var(--sf);color:var(--ink)}
+.acc,.sres{list-style:none;margin:0;padding:0}
+.acc>li{border-bottom:1px solid var(--bd)}
+.acc>li>button{width:100%;min-height:52px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;cursor:pointer;font:600 1.15rem/1.2 var(--serif);color:var(--p900);padding:0;text-align:left}
+.acc>li>button::after{content:"+";font:400 1.5rem/1 var(--sans);color:var(--p700);width:28px;text-align:center}
+.acc>li>button[aria-expanded=true]::after{content:"\2212"}
+.acc ul{list-style:none;margin:0;padding:0 0 10px 6px}
+.acc ul[hidden]{display:none}
+.acc ul a,.sres a{display:flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font-size:16px}
+.sres a{border-bottom:1px solid var(--bd)}
+.mpF{border-top:1px solid var(--p900);padding:10px var(--g) calc(10px + env(safe-area-inset-bottom,0px));display:grid;gap:8px;background:var(--bg)}
+.mpF :global(.btn){min-height:48px}
+.mp .nores{margin:8px 0}

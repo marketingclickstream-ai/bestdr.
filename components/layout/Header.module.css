@@ -1,0 +1,28 @@
+/* Site header and desktop dropdown menu. */
+.mast{background:var(--bg);border-bottom:1px solid var(--p900);position:relative;z-index:20}
+.mast :global(.wrap){display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;min-height:64px}
+.hwa{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;min-width:44px;background:var(--wa);color:var(--wat);border-radius:12px;text-decoration:none;font:600 14px/1 var(--sans);padding:0}
+.hwa svg{width:22px;height:22px;fill:currentColor}.hwa span{display:none}
+@media(min-width:440px){.mast :global(.wrap){grid-template-columns:44px minmax(0,1fr) auto}.hwa{padding:0 14px}.hwa span{display:inline}}
+.dnav,.hcb{display:none}
+@media(min-width:1180px){
+.mast :global(.wrap){display:flex;gap:14px;min-height:72px}.mast .burger{display:none}.mast :global(.logo){justify-self:auto}.mast :global(.lg){height:34px}
+.dnav{display:flex;align-items:center;margin:0 auto 0 8px;padding:0;list-style:none;gap:0}
+.dnav>li{position:relative;display:flex;align-items:center}
+.dnav>li>a{display:flex;align-items:center;min-height:44px;padding:0 2px 0 8px;color:var(--ink);text-decoration:none;font-weight:500;font-size:15px;white-space:nowrap}
+.dnav>li>a:hover{color:var(--p700);text-decoration:underline;text-underline-offset:6px}
+.cr{width:24px;height:44px;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--p900);padding:0}
+.cr::before{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+.dnav>li.open .cr::before{transform:rotate(-135deg) translateY(-2px)}
+.sub{display:none;position:absolute;left:0;top:100%;z-index:30;min-width:260px;background:var(--sf);border:1px solid var(--p900);border-top:4px solid var(--p900);padding:6px 0;margin:0;list-style:none;box-shadow:0 8px 24px rgba(11,52,64,.12)}
+.sub.r{left:auto;right:0}
+.sub.mega{min-width:500px;columns:2;column-gap:0}.sub.mega li{break-inside:avoid}
+.dnav>li:hover>.sub,.dnav>li.open>.sub{display:block}
+.sub a{display:flex;align-items:center;min-height:44px;padding:0 16px;color:var(--ink);text-decoration:none;font-size:15px}
+.sub a:hover{background:var(--p100);color:var(--p900)}
+.sub .all a{font-weight:600;color:var(--p700)}
+.hcb{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--a700);font-weight:500;font-size:14.5px;background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:var(--sans);white-space:nowrap}
+.hwa{padding:0 14px}
+}
+@media(min-width:1180px) and (max-width:1279px){.hcb{display:none}}
+@media(min-width:1280px){.hcb{display:inline-flex}}
