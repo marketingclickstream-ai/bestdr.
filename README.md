@@ -28,6 +28,8 @@ Checks: `npm run lint`, `npm run typecheck`, `npm test` (Vitest), `npm run build
 | `NEXT_PUBLIC_HI_ENABLED` | Emits hreflang for /hi/ once Hindi pages exist. |
 | `NEXT_PUBLIC_ANALYTICS`, `_SRC`, `_DOMAIN` | Analytics stub, off by default. Nothing loads unless set. |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Content and lead storage. Optional in development. |
+| `NEXT_PUBLIC_CHATBOT_SRC` | Optional chat widget script URL (https). Shows a "Chat with us" launcher. Nothing loads until a visitor clicks it and accepts the consent line. Unset means no launcher. |
+| `CHATBOT_ORIGINS` | Extra space-separated origins (script, frame, connect) the chat widget needs. Added to the CSP in `next.config.ts` together with the origin of `NEXT_PUBLIC_CHATBOT_SRC`. |
 | `REVALIDATE_SECRET` | Header secret for `POST /api/revalidate`. |
 
 ## Supabase setup
@@ -41,6 +43,14 @@ Checks: `npm run lint`, `npm run typecheck`, `npm test` (Vitest), `npm run build
 3. City page: add a row to `content/pages.ts` (`isPlaceholder: true` until real data exists), plus city FAQs in `content/faqs.ts`.
 4. Routes (`/[treatment]`, `/[treatment]-in-[city]`, `/cost/[treatment]`, sitemap) appear automatically. A page becomes live only when it is published, not a placeholder, and passes `lib/publish-gate.ts` (G1 to G13).
 5. Run `npm test && npm run build && npm run check:html`.
+
+## Release 2 additions
+- **Routes**: `/liposuction`, `/liposuction-in-{gurgaon,delhi,lucknow,kanpur}`, `/gynecomastia-surgery-in-{delhi,lucknow,kanpur}`, `/cost/liposuction`, `/learn` (filter by treatment), `/learn/[slug]` (24 written guides plus the earlier stubs). All city pages are data rows in `content/city-pages.ts`; they render fully but stay noindex until they pass the publish gate (unchanged).
+- **Content layout**: `content/liposuction.ts` (treatment content), `content/faqs-more.ts` (liposuction and city FAQs), `content/blog/` (`gynecomastia.ts`, `liposuction.ts`, `base.ts` stubs, `index.ts` merge). Blog line markup is documented in `content/blog/README.md` and parsed by `lib/blog-body.ts`.
+- **Images**: `components/ui/ImageSlot.tsx` gives each slot a fixed aspect ratio, an SVG default, and `next/image` once `imageSrc` is set. Every slot, size and location is listed in `public/images/README.md`. No images are generated.
+- **Seed**: `npm run seed:sql` writes `supabase/seed.sql` and `supabase/seed-add.sql`. Both use `on conflict` on every table and are safe to run again. `supabase/migrations/0002_release2.sql` (embedded in seed-add) removes duplicate cost lines and adds the unique index `costs_unique_line`. Page code also de-duplicates cost lines by (position, component).
+- **Mobile**: the sticky bar shows WhatsApp and Call me back (44 px targets, safe-area padding, page bottom padding equals bar height).
+- **Chat launcher** (`components/layout/ChatLauncher.tsx`): driven by `NEXT_PUBLIC_CHATBOT_SRC`. No script, frame or request until the visitor clicks "Chat with us" and accepts the consent line (DPDP). Nothing typed in the page forms is read or sent. It sits above the sticky bar on mobile and bottom-right on desktop, never over Call me back or WhatsApp, and respects reduced motion. CSP change needed: set `NEXT_PUBLIC_CHATBOT_SRC` and, if the widget uses other hosts, `CHATBOT_ORIGINS`; the CSP in `next.config.ts` then allows those origins for script, frame and connect. Rule: the sticky bar and the launcher must never both pop over content; do not add an auto-open widget.
 
 ## Deploy: Vercel and Hostinger DNS
 1. Import the repo in Vercel, add the env vars, deploy.
