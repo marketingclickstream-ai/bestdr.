@@ -40,6 +40,31 @@ export function relatedCards(site: SiteData, t: Treatment, c: City | null) {
   });
 }
 
-export function treatmentRangeText(p: { price: { minInr: number; maxInr: number; isSample: boolean } | null }): string {
-  return p.price ? `Usual total bill: Rs ${inrRange(p.price.minInr, p.price.maxInr)}${p.price.isSample ? " (to be confirmed)" : ""}` : "Price lines will be added when partner quotes are confirmed.";
+export function treatmentRangeText(p: { price: { minInr: number; maxInr: number; isSample: boolean } | null }, label = "Usual total bill"): string {
+  return p.price ? `${label}: Rs ${inrRange(p.price.minInr, p.price.maxInr)}${p.price.isSample ? " (to be confirmed)" : ""}` : "Price lines will be added when partner quotes are confirmed.";
+}
+
+/** Which two city pages a post links as next steps (strategy section 5: rotate by post). An explicit post.nextCities wins. */
+const NEXT_STEPS: Record<string, string[]> = {
+  "gynecomastia-liposuction-vs-gland-removal": ["gurgaon", "delhi"],
+  "gynecomastia-recovery-timeline": ["gurgaon", "delhi"],
+  "gynecomastia-surgery-risks": ["lucknow", "kanpur"],
+  "doctor-for-gynecomastia": ["lucknow", "kanpur"],
+  "liposuction-recovery-timeline": ["gurgaon", "delhi"],
+  "liposuction-risks": ["gurgaon", "delhi"],
+  "liposuction-candidate": ["lucknow", "kanpur"],
+  "types-of-liposuction": ["lucknow", "kanpur"],
+};
+
+export function nextCitiesFor(post: BlogPost): string[] {
+  return post.nextCities ?? NEXT_STEPS[post.slug] ?? [];
+}
+
+/** Two sibling guides on the same topic, the ones after this post in the list (wrapping around). */
+export function siblingPosts(site: SiteData, post: BlogPost, count = 2): BlogPost[] {
+  const same = site.posts.filter((p) => p.treatmentSlug === post.treatmentSlug && p.slug !== post.slug && p.body.length > 2);
+  const all = site.posts.filter((p) => p.treatmentSlug === post.treatmentSlug);
+  const at = all.findIndex((p) => p.slug === post.slug);
+  const ordered = [...all.slice(at + 1), ...all.slice(0, Math.max(at, 0))].filter((p) => same.includes(p));
+  return ordered.slice(0, count);
 }
