@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
   const body = (await req.json().catch(() => ({}))) as { paths?: unknown; all?: unknown };
+  revalidateTag("site-data"); // drop the cached Supabase reads first
   if (body.all === true) {
     revalidatePath("/", "layout");
     return NextResponse.json({ ok: true, all: true });
