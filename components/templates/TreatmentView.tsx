@@ -7,10 +7,11 @@ import { isLinkVisible } from "@/lib/pages";
 import { breadcrumbList, faqPage, graph, itemList, medicalWebPage, organization, videoObject } from "@/lib/schema";
 import { postsFor, relatedCards, videosFor } from "@/lib/view";
 import { ChestSectionPlate } from "../illustrations/Plates";
-import { CallbackBand, WhatsAppBand } from "../sections/Bands";
+import { AreasPlate } from "../illustrations/LipoPlates";
+import { CallbackBand, MidBanner, WhatsAppBand } from "../sections/Bands";
 import { FaqSection } from "../sections/Faq";
 import { Hero } from "../sections/Hero";
-import { FatOrGlandSection, OperationSection, RecoverySection, RisksSection } from "../sections/Medical";
+import { AreasSection, CompareSection, FatOrGlandSection, OperationSection, RecoverySection, RisksSection, TechniquesSection } from "../sections/Medical";
 import { PageShell } from "../sections/PageShell";
 import { RelatedReads, RelatedTreatments } from "../sections/Related";
 import { ChooseSurgeonSection, DisclaimerSection, InsuranceSection, ReviewerSection, TalkSection } from "../sections/Trust";
@@ -36,10 +37,14 @@ export function TreatmentView({ site, t }: { site: SiteData; t: Treatment }) {
   const range = t.nationalRange ? inrRange(t.nationalRange.minInr, t.nationalRange.maxInr) : null;
   const chip = t.nationalRange?.isSample ? "To be confirmed" : null;
   const crumbs = [{ name: "Home", path: "/" }, { name: "Plastic surgery", path: "/plastic-surgery" }, { name: t.name, path }];
+  const d = t.display;
   const toc = [
-    { id: "surgery", label: "The operation" }, { id: "fat-or-gland", label: "Fat or gland" }, { id: "recovery", label: "Recovery" },
-    { id: "risks", label: "Risks" }, { id: "cost", label: "Cost" }, { id: "faq", label: "Questions" },
-  ];
+    { id: "surgery", label: d?.tocLabels?.surgery ?? "The operation" },
+    content.fatOrGland ? { id: "fat-or-gland", label: "Fat or gland" } : null,
+    content.areas ? { id: "areas", label: d?.tocLabels?.choices ?? "Areas" } : null,
+    content.compare ? { id: "compare", label: "Other options" } : null,
+    { id: "recovery", label: "Recovery" }, { id: "risks", label: "Risks" }, { id: "cost", label: "Cost" }, { id: "faq", label: "Questions" },
+  ].filter((i): i is { id: string; label: string } => i !== null);
   const ld = graph(
     organization(), breadcrumbList(crumbs),
     medicalWebPage({ path, name: meta.title, description: meta.description, treatment: t, reviewer }),
@@ -49,28 +54,33 @@ export function TreatmentView({ site, t }: { site: SiteData; t: Treatment }) {
   return (
     <PageFrame jsonLd={ld} treatment={t.slug} label={t.name.toLowerCase()}>
       <Hero
-        crumbs={crumbs} title={t.name} titleEm="(male breast reduction)" dek={content.dek} reviewer={reviewer}
-        figure={range ? { label: "Usual total bill in India", value: range, chip, linkText: "What changes the price", href: "#cost" } : null}
-        waMessage={waMessage} plate={<ChestSectionPlate />}
-        plateCaption="The male chest in section. Gland sits behind the nipple, fat around it, muscle and rib beneath."
+        crumbs={crumbs} title={t.name} titleEm={d?.titleEm ?? (t.alternateName ? `(${t.alternateName.toLowerCase()})` : undefined)} dek={content.dek} reviewer={reviewer}
+        figure={range ? { label: d?.priceLabel ? `${d.priceLabel}, India` : "Usual total bill in India", value: range, chip, linkText: d?.priceLinkText ?? "What changes the price", href: "#cost" } : null}
+        waMessage={waMessage} plate={d?.heroPlate === "areas" ? <AreasPlate /> : <ChestSectionPlate />}
+        plateSlot={t.images?.hero}
+        plateCaption={d?.heroPlateCaption ?? "The male chest in section. Gland sits behind the nipple, fat around it, muscle and rib beneath."}
         shortAnswers={content.shortAnswers}
       />
       <PageShell toc={toc} chip={range ? { label: "Usual total bill", value: range, chip } : null} waMessage={waMessage}>
-        <OperationSection c={content} />
+        <OperationSection c={content} d={d} slot={t.images?.operation} />
         <FatOrGlandSection c={content} />
-        <RecoverySection c={content} />
+        <AreasSection c={content} />
+        <TechniquesSection c={content} />
+        <CompareSection c={content} />
+        <MidBanner id="mid-1" heading={content.areas ? "Not sure which areas to ask about?" : "Not sure which you have?"} text="Send one message. No photos needed, and nobody calls unless you ask." message={waMessage} />
+        <RecoverySection c={content} d={d} slot={t.images?.recovery} />
         <VideosSection videos={videos} />
-        <RisksSection c={content} />
+        <RisksSection c={content} d={d} />
         <section className="sec tint" id="cost">
           <SectionHead>What changes the price</SectionHead>
-          <p className="lead">The price depends on the grade, the method and the hospital. <Rich text={`The [national cost page](/cost/${t.slug}) explains each factor.`} /></p>
+          <p className="lead">The price depends on the case, the method and the hospital. <Rich text={`The [national cost page](/cost/${t.slug}) explains each factor.`} /></p>
           <ul className="plain">{t.costFactors.map((f) => <li key={f.factor}><b>{f.factor}:</b> {f.why}</li>)}</ul>
         </section>
         <WhatsAppBand message={waMessage} />
         <ChooseSurgeonSection />
         <CallbackBand treatment={t.slug} city="other" />
         <InsuranceSection c={content} />
-        <FaqSection faqs={faqs} heading="Questions men ask" />
+        <FaqSection faqs={faqs} heading={t.slug === "gynecomastia-surgery" ? "Questions men ask" : "Questions people ask"} />
         <RelatedReads posts={posts} />
         <RelatedTreatments cards={relatedCards(site, t, null)} />
         {liveCities.length > 0 && (
