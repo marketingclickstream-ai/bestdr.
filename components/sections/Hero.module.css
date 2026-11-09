@@ -1,0 +1,29 @@
+/* Hero: title block, price figure, short answers. */
+.hero{padding:20px 0 0}
+.hero .grid{display:grid;gap:28px}
+@media(min-width:900px){.hero .grid{grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:56px;align-items:start}.hero{padding-top:28px}}
+.dek{font-size:1.0625rem;color:var(--ink);margin:16px 0 14px;max-width:46ch}
+@media(min-width:768px){.dek{font-size:1.1875rem}}
+.by{font-size:13.5px;color:var(--muted);border-block:1px solid var(--bd);padding:7px 0;margin:0 0 16px;max-width:none}
+.fig{border-top:1px solid var(--p900);border-bottom:4px double var(--p900);padding:10px 0 12px;margin:0 0 16px;display:grid;grid-template-columns:1fr auto;gap:2px 16px;align-items:end}
+.fig .k{font-size:13.5px;color:var(--muted);grid-column:1/-1;margin:0}
+.fig .v{font:600 clamp(1.9rem,1.2rem + 2.4vw,2.75rem)/1.05 var(--serif);color:var(--p900);margin:0;letter-spacing:-.02em}
+.fig .v small{font-size:.5em;font-weight:400;font-style:italic;color:var(--p700);margin-right:2px}
+.fig .s{font-size:13.5px;margin:0;color:var(--ink);text-align:right}
+.fig a.s{color:var(--p700);display:inline-flex;align-items:center;justify-content:flex-end;min-height:44px}
+.hero :global(.cta) :global(.btn){flex:1 1 auto}
+@media(min-width:480px){.hero :global(.cta) :global(.btn){flex:0 0 auto}}
+.reass{font-size:14px;color:var(--muted);margin:12px 0 0}
+@media(min-width:900px){.plate{display:block;border-top:1px solid var(--p900);padding-top:10px}}
+.brief{margin:40px 0 0;border-top:1px solid var(--p900)}
+@media(min-width:900px){.brief{margin-top:48px}}
+.brief h2{font-size:1.25rem;padding:14px 0 6px}
+.brief ul{list-style:none;margin:0;padding:0}
+.brief li{display:grid;gap:2px 24px;padding:10px 0;border-top:1px solid var(--bd)}
+@media(min-width:768px){.brief li{grid-template-columns:260px 1fr;align-items:baseline}}
+.brief q{quotes:none;font:italic 400 1.125rem/1.3 var(--serif);color:var(--p900)}
+.brief li p{margin:0;font-size:.97rem}.brief li a{white-space:nowrap}
+.plate{margin:0;display:none}
+@media(min-width:900px){.plate{display:block;border-top:1px solid var(--p900);padding-top:10px}}
+.by b{font-weight:600;color:var(--ink)}
+.plate svg{display:block;width:100%;height:auto}
