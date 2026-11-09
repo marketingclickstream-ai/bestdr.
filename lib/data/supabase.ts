@@ -31,6 +31,8 @@ export function mapTreatment(r: Row): Treatment {
     icon: ([1, 2, 3].includes(Number(r.icon)) ? Number(r.icon) : 1) as 1 | 2 | 3,
     related: arr<string>(r.related), readSlugs: arr<string>(r.read_slugs), videoSlugs: arr<string>(r.video_slugs),
     reviewerId: str(r.reviewer_id) || null, published: bool(r.published), content: r.content ? obj(r.content, null) : null,
+    display: r.display ? obj(r.display, undefined as never) : undefined,
+    images: r.images ? obj(r.images, undefined as never) : undefined,
   };
 }
 
@@ -51,6 +53,8 @@ export function mapPage(r: Row): CityTreatmentPage {
     includes, facilities: r.facilities ? obj(r.facilities, null) : null, travel: r.travel ? obj(r.travel, null) : null,
     localContext: arr(r.local_context), usefulness: str(r.usefulness), signoffs: obj(r.signoffs, {}), lighthouseOk: bool(r.lighthouse_ok),
     beforeAfter: arr(r.before_after), localCopy: arr<string>(r.local_copy),
+    images: r.images ? obj(r.images, undefined as never) : undefined,
+    localNotes: arr(r.local_notes),
   };
 }
 
@@ -68,6 +72,8 @@ export function mapPost(r: Row): BlogPost {
     thumb: ([1, 2, 3].includes(Number(r.thumb)) ? Number(r.thumb) : 1) as 1 | 2 | 3, treatmentSlug: str(r.treatment_slug) || null,
     body: arr<string>(r.body), reviewerId: str(r.reviewer_id) || null, published: bool(r.published),
     datePublished: str(r.date_published), dateModified: str(r.date_modified),
+    cover: r.cover ? obj(r.cover, undefined as never) : undefined,
+    nextCities: r.next_cities ? arr<string>(r.next_cities) : undefined,
   };
 }
 
