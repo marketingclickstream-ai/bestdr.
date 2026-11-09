@@ -9,8 +9,11 @@ export const HI_ENABLED = process.env.NEXT_PUBLIC_HI_ENABLED === "on";
 /** Digits only. A value that is not 11 to 15 digits (unset, or a placeholder like 91XXXXXXXXXX) counts as "no number". */
 export const WHATSAPP_NUMBER = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
 export const HAS_WHATSAPP = /^\d{11,15}$/.test(WHATSAPP_NUMBER);
-export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Values pasted into a dashboard often carry spaces or quotes; strip them. The Vercel integration may
+// provide the key under the older (ANON_KEY) or the newer (PUBLISHABLE_KEY) name; either works.
+const clean = (v: string | undefined): string => (v ?? "").trim().replace(/^["']|["']$/g, "").trim();
+export const SUPABASE_URL = clean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL);
+export const SUPABASE_ANON_KEY = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 export const HAS_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 export function absoluteUrl(path: string): string {
