@@ -244,3 +244,12 @@ sup a{display:inline-block;padding:0 .35em;min-width:1.4em;text-align:center}
 .ib svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .pl svg{display:block;width:100%;height:auto}
 h1{overflow-wrap:break-word;hyphens:auto}
+.slot{position:relative;width:100%;overflow:hidden;border:1px solid var(--bd);background:var(--p100)}
+.slot .credit{position:absolute;right:6px;bottom:6px;font:500 11px/1 var(--sans);color:#fff;background:rgba(11,52,64,.72);padding:3px 6px;border-radius:3px}
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chipbtn{min-height:44px;padding:0 14px;border:1px solid var(--p700);background:var(--surface,#fff);color:var(--p900);font:600 14.5px var(--sans);border-radius:999px;cursor:pointer}
+.chipbtn[aria-pressed=true]{background:var(--p900);color:#fff}
+.chipbtn span{font-weight:400;opacity:.8}
+.post h2{margin-top:1.8em}.post .callout{border-left:4px solid var(--p700);background:var(--p100);padding:10px 14px;margin:18px 0;max-width:68ch}
+.post .srcline{font-size:14px;color:var(--muted);margin-top:24px}
+.postcover{margin:0 0 20px;max-width:760px}
