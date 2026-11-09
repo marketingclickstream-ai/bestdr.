@@ -2,6 +2,7 @@ import type { VideoItem } from "@/content/types";
 import Link from "next/link";
 import { PosterGrades, PosterRecovery } from "../illustrations/Plates";
 import { VideoFacade } from "../media/VideoFacade";
+import { ImageSlot } from "../ui/ImageSlot";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
 import { isLinkVisible } from "@/lib/pages";
@@ -11,7 +12,9 @@ export function VideoCard({ video }: { video: VideoItem }) {
   return (
     <figure className={styles.vid}>
       <VideoFacade title={video.title} duration={video.duration} youtubeId={video.youtubeId}>
-        {video.poster === "grades" ? <PosterGrades /> : <PosterRecovery />}
+        <ImageSlot slot={video.posterImage} ratio="16 / 9" sizes="(min-width:1180px) 30vw, 100vw">
+          {video.poster === "grades" ? <PosterGrades /> : <PosterRecovery />}
+        </ImageSlot>
       </VideoFacade>
       <h3>{video.title}</h3>
       <p>{video.duration} min. {video.isSample && <SampleChip />}</p>
