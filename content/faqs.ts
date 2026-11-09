@@ -1,10 +1,11 @@
 import type { FaqRow } from "./types";
+import { cityFaqs, liposuctionFaqs } from "./faqs-more";
 
 const T = "gynecomastia-surgery";
 
 // order is the position on the page. Treatment-level questions (citySlug null) appear on the
 // treatment page and on every city page; city-level ones only on their city.
-export const faqs: FaqRow[] = [
+const gynecomastiaFaqs: FaqRow[] = [
   { id: "faq-what", treatmentSlug: T, citySlug: null, order: 1, question: "What is gynecomastia?", answer: "It is growth of breast gland tissue in boys and men, on one side or both. The chest can also look full because of fat alone. Doctors call that pseudogynecomastia, and many men have a mix of the two." },
   { id: "faq-symptoms", treatmentSlug: T, citySlug: null, order: 2, question: "What are the signs, and which need a doctor soon?", answer: "A firm disc behind the nipple, uneven swelling, tenderness and a wider areola are the usual signs. A hard lump, change on one side only, pain or fluid from the nipple should be seen by a doctor early, before you think about surgery." },
   { id: "faq-candidate", treatmentSlug: T, citySlug: null, order: 3, question: "Who is a suitable candidate for surgery?", answer: "Surgeons look for good general health, a steady weight, a chest that has stopped changing, and a reason that matters to you. Smokers are usually asked to stop. A surgeon decides after an examination, not from a photo." },
@@ -20,3 +21,5 @@ export const faqs: FaqRow[] = [
   { id: "faq-myth", treatmentSlug: T, citySlug: null, order: 13, question: "Can creams, oils or supplements remove it?", answer: "There is no good evidence that creams, oils, homeopathy or fat-burner supplements remove gland tissue. Fat may shrink with weight loss, gland usually does not. Chest exercise builds muscle and can make a gland look more prominent." },
   { id: "faq-second", treatmentSlug: T, citySlug: null, order: 14, question: "What if I need a second operation?", answer: "It happens. Ask the hospital, in writing, whether a second operation is charged and for how long after the first. You can [compare two quotes](/learn/how-to-compare-surgery-quotes) on exactly this line." },
 ];
+
+export const faqs: FaqRow[] = [...gynecomastiaFaqs, ...liposuctionFaqs, ...cityFaqs];
