@@ -3,6 +3,7 @@ import type { City, SiteData } from "@/content/types";
 import { isLinkVisible } from "@/lib/pages";
 import { breadcrumbList, graph, itemList, organization } from "@/lib/schema";
 import { treatmentRangeText } from "@/lib/view";
+import { Rich } from "../ui/Rich";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
 import { SimplePage } from "./SimplePage";
@@ -55,7 +56,7 @@ export function CityHub({ site, c }: { site: SiteData; c: City }) {
       extra={
         <section className="sec tint" id="available">
           <SectionHead>Operations in {c.name}</SectionHead>
-          {pages.length === 0 ? <p>No page for {c.name} is ready yet.</p> : (
+          {pages.length === 0 ? <p><Rich text={`We have no confirmed place for surgery in ${c.name} yet, and no page for it is ready. The national [cost guides](/cost) and [procedure guides](/plastic-surgery) still apply, and the coordinator can tell you where care would happen.`} /></p> : (
             <ul className="rr full">
               {pages.map((p) => {
                 const t = site.treatments.find((x) => x.slug === p.treatmentSlug);
@@ -65,7 +66,7 @@ export function CityHub({ site, c }: { site: SiteData; c: City }) {
                     <div />
                     <div>
                       <h3><Link href={`/${t.slug}-in-${c.slug}`}>{t.name} in {c.name}</Link></h3>
-                      <p>{treatmentRangeText(p)}</p>
+                      <p>{treatmentRangeText(p, t.display?.priceLabel)}</p>
                       <p className="meta">{p.isPlaceholder ? <>Being prepared <SampleChip label="Draft" /></> : <>Price lines, recovery, risks</>}</p>
                     </div>
                   </li>
