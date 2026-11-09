@@ -10,7 +10,8 @@ import { Header } from "@/components/layout/Header";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { ProtoBanner } from "@/components/layout/ProtoBanner";
 import { StickyBar } from "@/components/layout/StickyBar";
-import { SITE_URL, PROTOTYPE_BANNER } from "@/lib/env";
+import { ChatLauncher } from "@/components/layout/ChatLauncher";
+import { CHATBOT_SRC, SITE_URL, PROTOTYPE_BANNER } from "@/lib/env";
 import { isLinkVisible, primeLinks } from "@/lib/pages";
 import { waLink } from "@/lib/whatsapp";
 
@@ -70,6 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
           <Footer groups={footerGroups} />
           <StickyBar whatsappHref={wa} />
+          {CHATBOT_SRC && <ChatLauncher src={CHATBOT_SRC} />}
         </div>
         <MobileMenu groups={groups} whatsappHref={wa} />
         <LeadDialog whatsappHref={wa} />
