@@ -1,4 +1,4 @@
-import type { City, CityTreatmentPage } from "@/content/types";
+import type { City, CityTreatmentPage, ImageSlotData } from "@/content/types";
 import { MapPlate } from "../illustrations/Plates";
 import { Plate } from "../ui/Plate";
 import { ResponsiveDetails } from "../ui/ResponsiveDetails";
@@ -31,7 +31,7 @@ export function FacilitiesSection({ city, page }: { city: City; page: CityTreatm
   );
 }
 
-export function GettingThereSection({ city, page, nearbyLine }: { city: City; page: CityTreatmentPage; nearbyLine: string | null }) {
+export function GettingThereSection({ city, page, nearbyLine, slot }: { city: City; page: CityTreatmentPage; nearbyLine: string | null; slot?: ImageSlotData }) {
   const t = page.travel;
   if (!t) return null;
   return (
@@ -46,7 +46,7 @@ export function GettingThereSection({ city, page, nearbyLine }: { city: City; pa
           </p>
           <p><Rich text={t.metro} /></p>
         </div>
-        <Plate n={5} caption={t.mapCaption}><MapPlate /></Plate>
+        <Plate n={5} caption={t.mapCaption} slot={slot}><MapPlate /></Plate>
       </div>
       <div className="full">
         <ResponsiveDetails summary="Rough road time from nearby areas" className="more dd full">
@@ -62,6 +62,20 @@ export function GettingThereSection({ city, page, nearbyLine }: { city: City; pa
         </ResponsiveDetails>
       </div>
       <p>{t.privacyNote}</p>
+    </section>
+  );
+}
+
+/** City-only notes (written per city; each marks what still needs real data). */
+export function LocalNotesSection({ city, page }: { city: City; page: CityTreatmentPage }) {
+  const notes = page.localNotes;
+  if (!notes || notes.length === 0) return null;
+  return (
+    <section className="sec" id="local-notes">
+      <SectionHead>Local notes for {city.name}</SectionHead>
+      <dl className="defs">
+        {notes.map((n) => <div key={n.heading}><dt>{n.heading}</dt><dd><Rich text={n.text} /></dd></div>)}
+      </dl>
     </section>
   );
 }
