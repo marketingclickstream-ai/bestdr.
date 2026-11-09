@@ -6,6 +6,9 @@ export interface NavLink { label: string; href: string; all?: boolean }
 export interface NavGroup { label: string; href: string; links: NavLink[]; alignRight?: boolean }
 
 export const SITE_NAME = "Bestdoctorsin";
+/** Date the editorial content was last changed. Used as sitemap lastmod and schema dateModified for pages that have no date of their own. Update it when copy changes. */
+export const CONTENT_UPDATED = "2026-11-10";
+export const CONTENT_FIRST_PUBLISHED = "2026-11-09";
 export const TAGLINE = "India's surgery-first patient guide. Plastic and cosmetic surgery, explained line by line.";
 export const DISCLAIMER =
   "Information on this site is for education, not medical advice. Outcomes vary from person to person. Talk to a registered surgeon before you decide.";
@@ -38,6 +41,8 @@ export const mainNav: NavGroup[] = [
     { label: "Gynecomastia risks", href: "/gynecomastia-surgery#risks" },
     { label: "Gynecomastia grades", href: "/learn/gynecomastia-grades" },
     { label: "Fat or gland", href: "/learn/gynecomastia-fat-or-gland" },
+    { label: "Liposuction recovery", href: "/liposuction#recovery" },
+    { label: "Liposuction risks", href: "/liposuction#risks" },
     { label: "All guides", href: "/learn", all: true },
   ] },
   { label: "Videos", href: "/videos", alignRight: true, links: [
@@ -66,6 +71,8 @@ export const footerNav: { label: string; links: NavLink[] }[] = [
     { label: "Plastic surgery in Gurgaon", href: "/plastic-surgery-in-gurgaon" },
     { label: "Gynecomastia surgery in Delhi", href: "/gynecomastia-surgery-in-delhi" },
     { label: "Plastic surgery in Delhi", href: "/plastic-surgery-in-delhi" },
+    { label: "Liposuction in Gurgaon", href: "/liposuction-in-gurgaon" },
+    { label: "Liposuction in Delhi", href: "/liposuction-in-delhi" },
     { label: "Plastic surgery in Lucknow", href: "/plastic-surgery-in-lucknow" },
     { label: "Plastic surgery in Kanpur", href: "/plastic-surgery-in-kanpur" },
   ] },
@@ -79,6 +86,8 @@ export const footerNav: { label: string; links: NavLink[] }[] = [
     { label: "Gynecomastia grades", href: "/learn/gynecomastia-grades" },
     { label: "Fat or gland?", href: "/learn/gynecomastia-fat-or-gland" },
     { label: "Pseudogynecomastia", href: "/learn/pseudogynecomastia" },
+    { label: "Liposuction is not weight loss", href: "/learn/liposuction-vs-weight-loss" },
+    { label: "Liposuction recovery, week by week", href: "/learn/liposuction-recovery-timeline" },
     { label: "Questions to ask your surgeon", href: "/learn/questions-to-ask-your-plastic-surgeon" },
     { label: "Videos", href: "/videos" },
     { label: "All guides", href: "/learn" },
