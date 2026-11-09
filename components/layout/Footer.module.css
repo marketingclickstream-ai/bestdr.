@@ -1,5 +1,6 @@
 /* Footer. */
 .footer{background:var(--p900);color:var(--p100);padding:0 0 36px;font-size:14.5px}
+@media(max-width:1023px){.footer{padding-bottom:calc(36px + 72px + env(safe-area-inset-bottom,0px))}}
 .footer :global(.wrap){border-top:1px solid rgba(227,239,241,.35);padding-top:28px}
 .footer :global(.lg){height:34px;color:#fff}
 .fbrand{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between;margin-bottom:18px}
