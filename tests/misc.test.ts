@@ -102,3 +102,11 @@ describe("QA fixes", () => {
     for (const t of ["safety", "safely", "offers", "guarantees", "discounted"]) expect(findBannedWords(t).length, t).toBeGreaterThan(0);
   });
 });
+
+describe("hotfix: stale or empty reads", () => {
+  it("a database with only gynecomastia published still resolves the Gurgaon slug", () => {
+    const site = { ...fixtures, treatments: fixtures.treatments.filter((t) => t.slug === "gynecomastia-surgery") };
+    expect(resolveSlug(site, "gynecomastia-surgery-in-gurgaon")?.kind).toBe("city-treatment");
+    expect(resolveSlug({ ...fixtures, treatments: [] }, "gynecomastia-surgery-in-gurgaon")).toBeNull();
+  });
+});
