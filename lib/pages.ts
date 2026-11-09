@@ -66,7 +66,7 @@ export function cityFaqRows(site: SiteData, t: Treatment, c: City): { all: FaqRo
 function uniqueTextOf(site: SiteData, p: CityTreatmentPage): string {
   const city = findCity(site, p.citySlug);
   const t = findTreatment(site, p.treatmentSlug);
-  const own = [...p.localCopy, p.travel, p.facilities, p.localContext, city && t ? faqsFor(site, p.treatmentSlug, p.citySlug).filter((f) => f.citySlug === p.citySlug) : []];
+  const own = [...p.localCopy, p.localNotes, p.travel, p.facilities, p.localContext, city && t ? faqsFor(site, p.treatmentSlug, p.citySlug).filter((f) => f.citySlug === p.citySlug) : []];
   return plain(collectStrings(own).join(" "));
 }
 
@@ -82,7 +82,7 @@ export function staticIsIndexable(s: StaticPage): boolean {
 
 /** The home page lists draft treatments with a Draft chip until every treatment has content. */
 export function homeIsIndexable(site: SiteData): boolean {
-  return site.treatments.every((t) => Boolean(t.content));
+  return site.treatments.filter((t) => t.published).every((t) => Boolean(t.content));
 }
 
 /** Paths that may appear in the sitemap: live, and free of placeholder chips. */
@@ -142,14 +142,16 @@ export function buildRegistry(site: SiteData, now = new Date()): Registry {
   for (const s of staticPages) reg.set(`/${s.slug}`, s.published);
   reg.set("/plastic-surgery", site.treatments.some((t) => t.published));
   reg.set("/cost", site.treatments.some((t) => t.published && t.nationalRange));
-  reg.set("/learn", site.posts.some((p) => p.published));
+  // A guide is live only when published AND reviewed by a real (non-sample) reviewer.
+  const postLive = (p: SiteData["posts"][number]) => p.published && Boolean(findReviewer(site, p.reviewerId)) && !findReviewer(site, p.reviewerId)!.isSample;
+  reg.set("/learn", site.posts.some(postLive));
   reg.set("/videos", site.videos.some((v) => !v.isSample));
   for (const t of site.treatments) {
     const clean = t.published && !hasPlaceholderMarkers(collectStrings([t.content, t.summary]).join(" "));
     reg.set(`/${t.slug}`, clean);
     if (t.nationalRange) reg.set(`/cost/${t.slug}`, clean && Boolean(t.content));
   }
-  for (const p of site.posts) reg.set(`/learn/${p.slug}`, p.published);
+  for (const p of site.posts) reg.set(`/learn/${p.slug}`, postLive(p));
   for (const c of site.cities) {
     let any = false;
     for (const p of site.pages.filter((x) => x.citySlug === c.slug)) {
