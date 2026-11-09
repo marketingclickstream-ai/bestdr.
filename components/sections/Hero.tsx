@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import type { Reviewer } from "@/content/types";
+import type { ImageSlotData, Reviewer } from "@/content/types";
+import { ImageSlot } from "../ui/ImageSlot";
 import type { Crumb } from "@/lib/schema";
 import { longDate } from "@/lib/format";
 import { Breadcrumbs } from "../layout/Breadcrumbs";
@@ -29,10 +30,11 @@ export interface HeroProps {
   waMessage: string;
   plate?: ReactNode;
   plateCaption?: string;
+  plateSlot?: ImageSlotData;
   shortAnswers: { q: string; a: string; href: string; linkText: string }[];
 }
 
-export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage, plate, plateCaption, shortAnswers }: HeroProps) {
+export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage, plate, plateCaption, plateSlot, shortAnswers }: HeroProps) {
   return (
     <section className={styles.hero} id="top">
       <div className="wrap">
@@ -72,7 +74,7 @@ export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage,
           </div>
           {plate && (
             <figure className={styles.plate}>
-              {plate}
+              <ImageSlot slot={plateSlot} ratio="4 / 5" sizes="(min-width:1180px) 30vw, 100vw" priority>{plate}</ImageSlot>
               {plateCaption && <figcaption className="fcap"><b>Plate 1.</b> {plateCaption}</figcaption>}
             </figure>
           )}
