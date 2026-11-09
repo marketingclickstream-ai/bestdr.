@@ -1,0 +1,22 @@
+/* Video facade. */
+.vgrid{display:grid;gap:26px;margin-top:6px}
+@media(min-width:768px){.vgrid{grid-template-columns:1fr 1fr;gap:32px}}
+.vid{margin:0}
+.vf{position:relative;aspect-ratio:16/9;background:var(--p100);border:1px solid var(--p900);overflow:hidden}
+.vf>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vplay{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.vplay i{width:64px;height:64px;border-radius:50%;background:var(--p900);position:relative;box-shadow:0 0 0 4px rgba(255,255,255,.85)}
+.vplay i::after{content:"";position:absolute;left:25px;top:19px;border-left:20px solid #fff;border-top:13px solid transparent;border-bottom:13px solid transparent}
+.vdur{position:absolute;right:8px;bottom:8px;background:var(--p900);color:#fff;font:600 12px/1 var(--sans);padding:4px 7px}
+.vmsg{position:absolute;inset:0;background:var(--p900);color:#fff;padding:16px;display:flex;flex-direction:column;justify-content:center;font-size:14px;line-height:1.45;overflow:auto}
+.vmsg[hidden]{display:none}.vmsg b{font-family:var(--serif);font-size:1.05rem}
+.vid h3{margin:12px 0 4px;font-size:1.15rem}
+.vid p{margin:0 0 6px;font-size:.95rem}
+.vid details{border-top:1px solid var(--bd);margin-top:6px}
+.vid summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:500;color:var(--p700)}
+.vid details p{font-size:.9rem;color:var(--ink)}
+.vplay{position:absolute;inset:auto;left:10px;bottom:10px;width:auto;height:auto;min-height:48px;display:inline-flex;gap:9px;align-items:center;background:var(--p900);color:#fff;border-radius:999px;padding:0 18px 0 6px;font:600 14px/1 var(--sans)}
+.vplay i{width:38px;height:38px;border-radius:50%;background:#fff;position:relative;box-shadow:none}
+.vplay i::after{content:"";position:absolute;left:15px;top:10px;border-left:12px solid var(--p900);border-top:9px solid transparent;border-bottom:9px solid transparent}
+.vplay:hover{background:var(--p700)}
+.frame{position:absolute;inset:0;width:100%;height:100%;border:0}
