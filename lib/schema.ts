@@ -1,5 +1,6 @@
 import type { BlogPost, FaqRow, Reviewer, Treatment, VideoItem } from "@/content/types";
 import { absoluteUrl, SITE_URL } from "./env";
+import { CONTENT_FIRST_PUBLISHED, CONTENT_UPDATED } from "@/content/site";
 
 // JSON-LD builders. Each returns a plain object; <JsonLd> prints it.
 // Rules: schema text equals visible text; no Physician / Hospital / LocalBusiness / Review /
@@ -44,6 +45,8 @@ export function medicalWebPage(args: {
   description: string;
   treatment: Treatment;
   reviewer: Reviewer | null;
+  datePublished?: string;
+  dateModified?: string;
 }) {
   const { treatment: t, reviewer } = args;
   const real = reviewer && !reviewer.isSample ? reviewer : null;
@@ -55,6 +58,8 @@ export function medicalWebPage(args: {
     description: args.description,
     inLanguage: "en-IN",
     publisher: { "@id": ORG_ID },
+    datePublished: args.datePublished ?? CONTENT_FIRST_PUBLISHED,
+    dateModified: args.dateModified ?? CONTENT_UPDATED,
     ...(real ? { reviewedBy: { "@type": "Person", name: real.name, jobTitle: real.credential }, lastReviewed: real.reviewedOn } : {}),
     about: {
       "@type": "MedicalProcedure",
