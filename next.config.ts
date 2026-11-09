@@ -4,14 +4,19 @@ import type { NextConfig } from "next";
 // (no-cookie) frames. Next.js writes small inline scripts into static pages, so scripts allow
 // 'unsafe-inline' (a per-request nonce would make every page dynamic and defeat ISR).
 const dev = process.env.NODE_ENV !== "production";
+// Optional chat widget (loaded only after a visitor clicks "Chat with us"). Its script origin, plus any extra origins
+// it needs (comma-separated in CHATBOT_ORIGINS, e.g. "https://api.example.com,https://cdn.example.com"), are allowed here.
+const originOf = (u: string): string => { try { return new URL(u).origin; } catch { return ""; } };
+const chat = [originOf(process.env.NEXT_PUBLIC_CHATBOT_SRC ?? ""), ...(process.env.CHATBOT_ORIGINS ?? "").split(",").map((x) => originOf(x.trim()))].filter(Boolean);
+const chatList = chat.length ? " " + [...new Set(chat)].join(" ") : "";
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}${chatList}`,
+  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com${chatList}`,
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob:",
-  "connect-src 'self'",
-  "frame-src https://www.youtube-nocookie.com",
+  `img-src 'self' data: blob:${chatList}`,
+  `connect-src 'self'${chatList}`,
+  `frame-src https://www.youtube-nocookie.com${chatList}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
