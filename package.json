@@ -1,16 +1,41 @@
 {
-  "name": "axe",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "bestdoctorsin-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "bestdoctorsin.com: surgery-first patient guide (Next.js 15, Supabase, Vercel)",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check:html": "tsx scripts/check-rendered.ts",
+    "seed:sql": "tsx scripts/generate-seed.ts",
+    "format": "prettier --write ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "axe-core": "^4.14.0",
-    "lighthouse": "^12.8.2"
+    "@supabase/supabase-js": "^2.119.0",
+    "next": "^15.5.29",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "cheerio": "^1.2.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.29",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0"
   }
 }
