@@ -1,4 +1,5 @@
-import type { TreatmentContent } from "@/content/types";
+import type { ImageSlotData, TreatmentContent, TreatmentDisplay } from "@/content/types";
+import { AreasPlate, CannulaPlate } from "../illustrations/LipoPlates";
 import { GradesPlate, TechniquePlate, TissueTypesPlate, VestPlate } from "../illustrations/Plates";
 import { FootRef } from "../ui/FootRef";
 import { Note } from "../ui/Note";
@@ -7,18 +8,19 @@ import { ResponsiveDetails } from "../ui/ResponsiveDetails";
 import { Rich } from "../ui/Rich";
 import { SectionHead } from "../ui/SectionHead";
 
-export function OperationSection({ c }: { c: TreatmentContent }) {
+export function OperationSection({ c, d, slot }: { c: TreatmentContent; d?: TreatmentDisplay; slot?: ImageSlotData }) {
   const o = c.operation;
+  const caps = d?.operationCaptions ?? [{ title: "Liposuction only", text: "Fat out, gland stays" }, { title: "Gland removal", text: "Small cut, with liposuction if needed" }];
   return (
     <section className="sec" id="surgery">
-      <SectionHead>What the operation involves: fat, gland or both</SectionHead>
+      <SectionHead>{d?.operationHeading ?? "What the operation involves: fat, gland or both"}</SectionHead>
       <div className="blk full">
         <div>
           <p className="lead"><Rich text={o.lead} /></p>
           <p><Rich text={o.body} /></p>
         </div>
-        <Plate n={2} caption={o.caption} captions={[{ title: "Liposuction only", text: "Fat out, gland stays" }, { title: "Gland removal", text: "Small cut, with liposuction if needed" }]}>
-          <TechniquePlate />
+        <Plate n={2} caption={o.caption} captions={caps} slot={slot}>
+          {d?.operationPlate === "cannula" ? <CannulaPlate /> : <TechniquePlate />}
         </Plate>
       </div>
       <Note label="Ask the surgeon">{o.ask}</Note>
@@ -36,6 +38,7 @@ export function OperationSection({ c }: { c: TreatmentContent }) {
 
 export function FatOrGlandSection({ c }: { c: TreatmentContent }) {
   const f = c.fatOrGland;
+  if (!f) return null;
   return (
     <section className="sec" id="fat-or-gland">
       <SectionHead>Is it fat or gland? When surgery is not the first step</SectionHead>
@@ -97,17 +100,17 @@ export function FatOrGlandSection({ c }: { c: TreatmentContent }) {
   );
 }
 
-export function RecoverySection({ c }: { c: TreatmentContent }) {
+export function RecoverySection({ c, d, slot }: { c: TreatmentContent; d?: TreatmentDisplay; slot?: ImageSlotData }) {
   const r = c.recovery;
   return (
     <section className="sec tint" id="recovery">
-      <SectionHead>Recovery calendar: day 0 to week 12</SectionHead>
+      <SectionHead>{d?.recoveryHeading ?? "Recovery calendar: day 0 to week 12"}</SectionHead>
       <div className="blk full">
         <div>
           <p className="lead"><Rich text={r.lead} /><FootRef n={3} id="r3" /></p>
           <p><Rich text={r.body} /></p>
         </div>
-        <Plate n={4} caption="Compression vest: worn as advised by the surgeon."><VestPlate /></Plate>
+        <Plate n={4} caption="Compression garment: worn as advised by the surgeon." slot={slot}><VestPlate /></Plate>
       </div>
       <div className="pf">
         {r.highlights.map((h) => (
@@ -145,7 +148,7 @@ export function RecoverySection({ c }: { c: TreatmentContent }) {
   );
 }
 
-export function RisksSection({ c }: { c: TreatmentContent }) {
+export function RisksSection({ c, d }: { c: TreatmentContent; d?: TreatmentDisplay }) {
   const r = c.risks;
   return (
     <section className="sec tint" id="risks">
@@ -167,8 +170,94 @@ export function RisksSection({ c }: { c: TreatmentContent }) {
         <ResponsiveDetails summary="The surgeon may ask you to wait"><ul className="plain">{r.wait.map((x) => <li key={x}>{x}</li>)}</ul></ResponsiveDetails>
         <ResponsiveDetails summary="Tell the surgeon at the first visit"><ul className="plain">{r.tell.map((x) => <li key={x}>{x}</li>)}</ul></ResponsiveDetails>
       </div>
-      <p><Rich text="See [risks in more detail](/gynecomastia-surgery#risks) on the procedure guide, and our [medical disclaimer](/medical-disclaimer)." /></p>
+      <p><Rich text={`See [risks in more detail](${d?.riskGuideHref ?? "/gynecomastia-surgery#risks"}) on the procedure guide, and our [medical disclaimer](/medical-disclaimer).`} /></p>
     </section>
   );
 }
 
+
+/** Liposuction: which areas, and how the price differs by area. */
+export function AreasSection({ c }: { c: TreatmentContent }) {
+  const a = c.areas;
+  if (!a) return null;
+  return (
+    <section className="sec" id="areas">
+      <SectionHead>Which areas can be treated</SectionHead>
+      <div className="blk rev full">
+        <div>
+          <p className="lead"><Rich text={a.lead} /></p>
+          <p><Rich text={a.body} /></p>
+        </div>
+        <Plate n={3} caption="Areas where liposuction is commonly planned." ratio="3 / 2"><AreasPlate /></Plate>
+      </div>
+      <div className="full">
+        <table className="gt">
+          <caption>Areas, and what changes the plan and the price in each</caption>
+          <thead><tr><th scope="col">Area</th><th scope="col">Usually</th><th scope="col">What it depends on</th></tr></thead>
+          <tbody>
+            {a.rows.map((r) => (
+              <tr key={r.area}><th scope="row">{r.area}</th><td data-l="Usually">{r.usual}</td><td data-l="Depends on"><Rich text={r.depends} /></td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Note label="Ask the surgeon">{a.note}</Note>
+    </section>
+  );
+}
+
+/** Liposuction: technique comparison table (generic names). */
+export function TechniquesSection({ c }: { c: TreatmentContent }) {
+  const t = c.techniques;
+  if (!t) return null;
+  return (
+    <section className="sec" id="techniques">
+      <SectionHead>Techniques compared</SectionHead>
+      <p className="lead"><Rich text={t.lead} /></p>
+      <div className="full">
+        <table className="gt">
+          <caption>Liposuction techniques in plain words</caption>
+          <thead><tr><th scope="col">Technique</th><th scope="col">How it works</th><th scope="col">Often used for</th><th scope="col">Ask like this</th></tr></thead>
+          <tbody>
+            {t.rows.map((r) => (
+              <tr key={r.name}><th scope="row">{r.name}</th><td data-l="How">{r.how}</td><td data-l="Often for">{r.often}</td><td data-l="Ask">{r.ask}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p><Rich text={t.note} /></p>
+    </section>
+  );
+}
+
+/** Liposuction: versus tummy tuck, non-surgical options and who should wait. */
+export function CompareSection({ c }: { c: TreatmentContent }) {
+  const m = c.compare;
+  if (!m) return null;
+  return (
+    <section className="sec tint" id="compare">
+      <SectionHead>Liposuction, a tummy tuck, or non-surgical options</SectionHead>
+      <p className="lead"><Rich text={m.tummyTuckLead} /></p>
+      <div className="full">
+        <table className="gt">
+          <caption>Liposuction and tummy tuck compared</caption>
+          <thead><tr><th scope="col">What you notice</th><th scope="col">Liposuction</th><th scope="col">Tummy tuck</th></tr></thead>
+          <tbody>
+            {m.tummyTuck.map((r) => (
+              <tr key={r.feature}><th scope="row">{r.feature}</th><td data-l="Liposuction">{r.lipo}</td><td data-l="Tummy tuck">{r.tuck}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <h3>Non-surgical options</h3>
+      <p><Rich text={m.nonSurgicalLead} /></p>
+      <dl className="defs">
+        {m.nonSurgical.map((n) => <div key={n.name}><dt>{n.name}</dt><dd>{n.text}</dd></div>)}
+      </dl>
+      <p><Rich text={m.nonSurgicalNote} /></p>
+      <ResponsiveDetails summary="Who is often asked to wait">
+        <ul className="plain">{m.whoShouldWait.map((x) => <li key={x}>{x}</li>)}</ul>
+      </ResponsiveDetails>
+    </section>
+  );
+}
