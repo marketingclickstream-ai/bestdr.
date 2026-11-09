@@ -42,7 +42,7 @@ describe("registry", () => {
   it("marks nothing live while all content is sample or unreviewed", () => {
     const reg = buildRegistry(fixtures, new Date("2026-11-09"));
     expect(reg.get("/gynecomastia-surgery-in-gurgaon")).toBe(false);
-    expect(reg.has("/cost/liposuction")).toBe(false); // no national range, so no page
+    expect(reg.get("/cost/liposuction")).toBe(false); // exists now (national range set), but not live
     expect(reg.has("/cost/gynecomastia-surgery")).toBe(true);
   });
 });
@@ -93,10 +93,13 @@ describe("QA fixes", () => {
     const { staticPages } = await import("@/content/static-pages");
     const privacy = staticPages.find((s) => s.slug === "privacy")!;
     expect(staticIsIndexable(privacy)).toBe(false);
-    expect(homeIsIndexable(fixtures)).toBe(false);
+    // A published treatment with no content (a stub) keeps the home page noindex; unpublished stubs do not.
+    const withStub = { ...fixtures, treatments: fixtures.treatments.map((t) => (t.slug === "tummy-tuck" ? { ...t, published: true } : t)) };
+    expect(homeIsIndexable(withStub)).toBe(false);
+    expect(homeIsIndexable(fixtures)).toBe(true);
     const paths = sitemapPaths(fixtures);
     expect(paths).not.toContain("/privacy");
-    expect(paths).not.toContain("/");
+    expect(paths).not.toContain("/gynecomastia-surgery-in-gurgaon");
   });
   it("banned-word stems are caught", () => {
     for (const t of ["safety", "safely", "offers", "guarantees", "discounted"]) expect(findBannedWords(t).length, t).toBeGreaterThan(0);
