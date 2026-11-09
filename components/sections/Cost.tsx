@@ -1,5 +1,6 @@
 import type { CostLine, PriceMeta } from "@/content/types";
 import { inrRange, longDate } from "@/lib/format";
+import { uniqueCostLines } from "@/lib/data";
 import { FootRef } from "../ui/FootRef";
 import { Note } from "../ui/Note";
 import { Rich } from "../ui/Rich";
@@ -19,12 +20,13 @@ export function PriceFigure({ price, label }: { price: PriceMeta; label: string 
 }
 
 /** Price table: one row per fee, then the total. A fee with no separate figure reads "In the total". */
-export function CostTable({ lines, price, caption }: { lines: CostLine[]; price: PriceMeta; caption: string }) {
+export function CostTable({ lines: raw, price, caption, mode = "sum" }: { lines: CostLine[]; price: PriceMeta; caption: string; mode?: "sum" | "options" }) {
+  const lines = uniqueCostLines(raw); // the total counts unique lines only
   return (
     <table className="gt pt">
       <caption className="cap-t"><span>{caption}</span> <SampleChip label={price.isSample ? price.chipLabel : "Dated"} /></caption>
       <thead>
-        <tr><th scope="col">Line in the quote</th><th scope="col">Typical range, Rs</th><th scope="col">What it depends on</th></tr>
+        <tr><th scope="col">{mode === "options" ? "Case" : "Line in the quote"}</th><th scope="col">Typical range, Rs</th><th scope="col">What it depends on</th></tr>
       </thead>
       <tbody>
         {lines.map((l) => (
@@ -34,11 +36,13 @@ export function CostTable({ lines, price, caption }: { lines: CostLine[]; price:
             <td data-l="Depends on">{l.note}</td>
           </tr>
         ))}
-        <tr className="tot">
-          <th scope="row">Total, {lines.length === 3 ? "three fees" : `${lines.length} lines`}</th>
-          <td className="r" data-l="Range">{inrRange(price.minInr, price.maxInr)}</td>
-          <td data-l="Depends on">Sum of the lines above</td>
-        </tr>
+        {mode === "sum" && (
+          <tr className="tot">
+            <th scope="row">Total, {lines.length === 3 ? "three fees" : `${lines.length} lines`}</th>
+            <td className="r" data-l="Range">{inrRange(price.minInr, price.maxInr)}</td>
+            <td data-l="Depends on">Sum of the lines above</td>
+          </tr>
+        )}
       </tbody>
     </table>
   );
@@ -79,7 +83,11 @@ export function QuoteChecker({ checks }: { checks: string[] }) {
   );
 }
 
-export function CostSection({ treatmentSlug, cityName, price, lines, extras, process, checks, termNote }: {
+export function CostSection({ treatmentSlug, cityName, price, lines, extras, process, checks, termNote, mode = "sum", heading, caption, priceLabel }: {
+  mode?: "sum" | "options";
+  heading?: string;
+  caption?: string;
+  priceLabel?: string;
   treatmentSlug: string;
   cityName: string;
   price: PriceMeta;
@@ -91,12 +99,12 @@ export function CostSection({ treatmentSlug, cityName, price, lines, extras, pro
 }) {
   return (
     <section className="sec tint" id="cost">
-      <SectionHead>What it costs in {cityName}, line by line</SectionHead>
+      <SectionHead>{heading ? `${heading} in ${cityName}` : `What it costs in ${cityName}, line by line`}</SectionHead>
       <p className="lead">One bill. The range below is {price.isSample ? "to be confirmed in writing for the partner hospital" : `dated ${longDate(price.collectedOn)}`}. The final number comes only after a surgeon has examined you.</p>
-      <PriceFigure price={price} label={`Usual total bill in ${cityName}`} />
+      <PriceFigure price={price} label={priceLabel ? `${priceLabel} in ${cityName}` : `Usual total bill in ${cityName}`} />
       <Note label="Ask in writing">A quote counts only if it lists the fees one by one and says what is left out. A single round number tells you nothing.</Note>
       <div className="full">
-        <CostTable lines={lines} price={price} caption="Price table for the operation, both sides." />
+        <CostTable lines={lines} price={price} mode={mode} caption={caption ?? "Price table for the operation, both sides."} />
       </div>
       <ExtrasLedger items={extras} />
       <p style={{ marginTop: 14 }}>
