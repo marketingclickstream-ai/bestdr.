@@ -5,13 +5,14 @@ import { cityFaqRows, cityPageStatus } from "@/lib/pages";
 import { breadcrumbList, faqPage, graph, itemList, medicalWebPage, organization, videoObject } from "@/lib/schema";
 import { nearbyLines, postsFor, relatedCards, videosFor } from "@/lib/view";
 import { ChestSectionPlate } from "../illustrations/Plates";
+import { AreasPlate } from "../illustrations/LipoPlates";
 import { Hero } from "../sections/Hero";
 import { PageShell } from "../sections/PageShell";
-import { CostCheckerBand, CallbackBand, WhatsAppBand } from "../sections/Bands";
+import { CostCheckerBand, CallbackBand, MidBanner, WhatsAppBand } from "../sections/Bands";
 import { CostSection } from "../sections/Cost";
 import { FaqSection } from "../sections/Faq";
-import { FacilitiesSection, GettingThereSection } from "../sections/Local";
-import { FatOrGlandSection, OperationSection, RecoverySection, RisksSection } from "../sections/Medical";
+import { FacilitiesSection, GettingThereSection, LocalNotesSection } from "../sections/Local";
+import { AreasSection, CompareSection, FatOrGlandSection, OperationSection, RecoverySection, RisksSection, TechniquesSection } from "../sections/Medical";
 import { NearbyCities, RelatedReads, RelatedTreatments } from "../sections/Related";
 import { ChooseSurgeonSection, DisclaimerSection, InsuranceSection, ReviewerSection, TalkSection } from "../sections/Trust";
 import { VideosSection } from "../sections/Videos";
@@ -47,11 +48,15 @@ export function CityTreatmentView({ site, t, c, p }: { site: SiteData; t: Treatm
     { name: `In ${c.name}`, path },
   ];
 
+  const d = t.display;
   const toc = [
-    { id: "cost", label: "Cost" }, { id: "surgery", label: "The operation" }, { id: "fat-or-gland", label: "Fat or gland" },
+    { id: "cost", label: "Cost" }, { id: "surgery", label: d?.tocLabels?.surgery ?? "The operation" },
+    content.fatOrGland ? { id: "fat-or-gland", label: "Fat or gland" } : null,
+    content.areas ? { id: "areas", label: d?.tocLabels?.choices ?? "Areas" } : null,
+    content.compare ? { id: "compare", label: "Other options" } : null,
     { id: "recovery", label: "Recovery" }, { id: "videos", label: "Videos" }, { id: "risks", label: "Risks" },
     { id: "getting-there", label: "Getting there" }, { id: "faq", label: "Questions" },
-  ].filter((i) => i.id !== "videos" || videos.length > 0);
+  ].filter((i): i is { id: string; label: string } => i !== null && (i.id !== "videos" || videos.length > 0));
 
   const ld = graph(
     organization(),
@@ -70,10 +75,14 @@ export function CityTreatmentView({ site, t, c, p }: { site: SiteData; t: Treatm
         titleEm={`in ${c.name}`}
         dek={content.dek}
         reviewer={reviewer}
-        figure={{ label: `Usual total bill in ${c.name}`, value: range, chip, linkText: `${lines.length === 3 ? "Three" : lines.length} fees inside it`, href: "#cost" }}
+        figure={{
+          label: d?.priceLabel ? `${d.priceLabel} in ${c.name}` : `Usual total bill in ${c.name}`, value: range, chip,
+          linkText: d?.priceLinkText ?? `${lines.length === 3 ? "Three" : lines.length} fees inside it`, href: "#cost",
+        }}
         waMessage={waMessage}
-        plate={<ChestSectionPlate />}
-        plateCaption="The male chest in section. Gland sits behind the nipple, fat around it, muscle and rib beneath."
+        plate={d?.heroPlate === "areas" ? <AreasPlate /> : <ChestSectionPlate />}
+        plateSlot={t.images?.hero}
+        plateCaption={d?.heroPlateCaption ?? "The male chest in section. Gland sits behind the nipple, fat around it, muscle and rib beneath."}
         shortAnswers={content.shortAnswers}
       />
       <PageShell toc={toc} chip={{ label: "Usual total bill", value: range, chip }} waMessage={waMessage}>
@@ -81,20 +90,27 @@ export function CityTreatmentView({ site, t, c, p }: { site: SiteData; t: Treatm
           treatmentSlug={t.slug} cityName={c.name} price={p.price} lines={lines} extras={content.extras}
           process={content.quoteProcess} checks={content.quoteChecks}
           termNote="Day care means you go home the same day. Overnight means one night in a room, and it costs more."
+          mode={d?.costMode} heading={d?.costHeading} caption={d?.costCaption} priceLabel={d?.priceLabel}
         />
         <CostCheckerBand rangeText={range} chipLabel={chip} />
-        <OperationSection c={content} />
+        <OperationSection c={content} d={d} slot={t.images?.operation} />
         <FatOrGlandSection c={content} />
-        <RecoverySection c={content} />
+        <AreasSection c={content} />
+        <TechniquesSection c={content} />
+        <CompareSection c={content} />
+        <MidBanner id="mid-1" heading={content.areas ? "Not sure which areas to ask about?" : "Not sure which you have?"} text="Send one message. No photos needed, and nobody calls unless you ask." message={waMessage} />
+        <RecoverySection c={content} d={d} slot={t.images?.recovery} />
+        <MidBanner id="mid-2" heading="Plan your leave" text="Ask for a recovery plan that fits your job and your travel home." message={`${waMessage}: please send a recovery plan for my work`} label="Ask for a recovery plan" />
         <VideosSection videos={videos} />
-        <RisksSection c={content} />
+        <RisksSection c={content} d={d} />
         <WhatsAppBand message={waMessage} />
         <FacilitiesSection city={c} page={p} />
-        <GettingThereSection city={c} page={p} nearbyLine={first ? `${first.lead} [the same surgery in ${first.cityName}](${first.href}) for local travel notes.` : null} />
+        <GettingThereSection city={c} page={p} slot={p.images?.travel} nearbyLine={first ? `${first.lead} [the same surgery in ${first.cityName}](${first.href}) for local travel notes.` : null} />
+        <LocalNotesSection city={c} page={p} />
         <ChooseSurgeonSection />
         <CallbackBand treatment={t.slug} city={c.slug} />
         <InsuranceSection c={content} />
-        <FaqSection faqs={faqs} patientQuestions={content.patientQuestions} />
+        <FaqSection faqs={faqs} patientQuestions={content.patientQuestions} heading={t.slug === "gynecomastia-surgery" ? "Questions men ask" : "Questions people ask"} />
         <RelatedReads posts={posts} />
         <RelatedTreatments cards={relatedCards(site, t, c)} />
         <NearbyCities lines={near.map((n) => n.line)} />
