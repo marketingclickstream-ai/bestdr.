@@ -54,3 +54,15 @@ Re-run after the fixes: build green (shared JS 103 kB, pages 109 to 111 kB), lin
 | QA-14 | Fixed | VideoObject is emitted only for non-sample videos with a YouTube id. |
 | QA-18 | Fixed | "fake offers" and "safety guarantees" reworded; checker uses stems. |
 | QA-09, QA-12, QA-13, QA-15, QA-16, QA-17, QA-19, QA-20, rest of QA-21, QA-22 | Not fixed | Outside the requested scope: need a platform IP header or shared limiter (QA-09), design review of chips and footnote targets, the Next 16 upgrade (QA-22), and launch-time items. QA-13 chips on the sticky rail and short answers still need adding. |
+
+## Hotfix (stale Supabase Data Cache)
+Live 404 on the Gurgaon page was caused by Next.js caching the first Supabase read (made before treatments were published) across redeploys. Fixed with a per-deployment cache key, a 5 minute lifetime and a revalidate tag; added `/api/health`, loud empty-read logging and `supabase/fix-publish.sql`. Details in HOTFIX.md.
+
+
+## Release 2
+**Built**: liposuction treatment page and `/cost/liposuction` (no headline floor price; per-area options table), eight city pages as data (gynecomastia Delhi, Lucknow, Kanpur; liposuction Gurgaon, Delhi, Lucknow, Kanpur) with distinct local copy, travel notes, local FAQs (4 each) and local facts flagged NEEDS REAL DATA; image slots; 24 guides integrated with `/learn` topic filter, BlogPosting schema, related reads and in-post CTA; hubs, menus, footer, sitemap with real lastmod; idempotent seed generation.
+**Gate**: unchanged. All eight new city pages fail G1 (sample price), G7, G10 (chips), G11, G13 and stay noindex. G6 (distinct text) passes for 7 of 8 (similarity 10 to 16 percent); the Gurgaon gynecomastia page is under the word floor, so it also stays noindex on G6.
+**Founder mobile fixes**: duplicate "Facility fee" fixed at three levels (seed upserts, unique index plus dedupe in seed-add, de-duplication in code with "Total, N lines" from unique lines); sticky bar fixed at 360 px; ChatLauncher added. A 360 px and 1366 px sweep of 22 routes found no sideways scroll.
+**Results**: build 81 static pages; shared JS 103 kB, largest route 117 kB (limit 150 kB); lint and typecheck clean; vitest 61/61; playwright 24/24; `check:html` 75 pages, 36 with FAQ, 0 failures (banned words and FAQ parity).
+**Known gaps**: DOM is about 1,700 nodes on city pages (target was 1,500); no real images yet; local facts, travel times and partner facilities need real data; recovery calendar pending surgeon review; guides carry a sample reviewer so stay noindex.
+**Kept**: hotfix cache key, `/api/health`, QA fixes.
