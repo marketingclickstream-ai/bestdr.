@@ -8,6 +8,9 @@ import * as botulinumToxin from "./botulinum-toxin";
 import * as antiAging from "./anti-aging";
 import * as prp from "./prp";
 import * as hairTransplant from "./hair-transplant";
+import * as plasticRecovery from "./plastic-recovery";
+import * as plasticGuides from "./plastic-guides";
+import * as plasticCost from "./plastic-cost";
 
 // The blog list. Written guides (gynecomastia.ts, liposuction.ts and the six skin, hair and anti-aging files) replace
 // the stub with the same slug; stubs without a written guide stay as drafts. Any exported array of posts in those files is picked up.
@@ -24,6 +27,9 @@ const written = [
   ...fromModule(antiAging),
   ...fromModule(prp),
   ...fromModule(hairTransplant),
+  ...fromModule(plasticRecovery),
+  ...fromModule(plasticGuides),
+  ...fromModule(plasticCost),
 ];
 const writtenSlugs = new Set(written.map((p) => p.slug));
 
