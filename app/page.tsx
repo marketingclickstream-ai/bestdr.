@@ -9,14 +9,15 @@ import { getSite } from "@/lib/data";
 import { homeIsIndexable, isLinkVisible, primeLinks } from "@/lib/pages";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbList, graph, organization } from "@/lib/schema";
+import { groupByCategory } from "@/lib/topic";
 
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
   return buildMetadata({
-    title: "Plastic surgery in India: cost, recovery, risks",
-    description: "Plain guides to plastic and cosmetic surgery in Delhi, Gurgaon, Kanpur and Lucknow: price lines, recovery by week, risks, and how we check surgeons.",
+    title: "Plastic surgery, skin and hair care in India",
+    description: "Plain guides to plastic surgery, skin, hair and injectable treatments in Delhi, Gurgaon, Kanpur and Lucknow: price lines, recovery or downtime, risks, and how we check doctors.",
     path: "/",
     // Draft chips on the home page keep it noindex until every treatment has content.
     index: homeIsIndexable(site),
@@ -32,17 +33,22 @@ export default async function Home() {
     <PageFrame jsonLd={graph(organization(), breadcrumbList([{ name: "Home", path: "/" }]))}>
       <section className="hero" style={{ paddingTop: 28 }}>
         <div className="wrap">
-          <h1>Plastic surgery in India, <em>explained line by line</em></h1>
-          <p className="lead" style={{ marginTop: 16 }}>The price in writing, recovery by week, the risks to ask about, and how we check a surgeon. Delhi, Gurgaon, Kanpur and Lucknow first.</p>
+          <h1>Plastic surgery, skin and hair care in India, <em>explained line by line</em></h1>
+          <p className="lead" style={{ marginTop: 16 }}>The price in writing, recovery or downtime, the risks to ask about, and how we check a doctor. Delhi, Gurgaon, Kanpur and Lucknow first.</p>
           <p>Bestdoctorsin is a name, not a ranking. We do not rank or rate doctors.</p>
         </div>
       </section>
       <div className="wrap">
         <section className="sec tint">
-          <SectionHead>Operations</SectionHead>
-          <ul className="plain">
-            {treatments.map((t) => <li key={t.slug}><Link href={`/${t.slug}`}>{t.name}</Link>{!t.content && <> <SampleChip label="Draft" /></>}</li>)}
-          </ul>
+          <SectionHead>Operations and treatments</SectionHead>
+          {groupByCategory(treatments).map((g) => (
+            <div key={g.info.id}>
+              <h3>{g.info.label}</h3>
+              <ul className="plain">
+                {g.items.map((t) => <li key={t.slug}><Link href={`/${t.slug}`}>{t.name}</Link>{!t.content && <> <SampleChip label="Draft" /></>}</li>)}
+              </ul>
+            </div>
+          ))}
         </section>
         <section className="sec">
           <SectionHead>Cities</SectionHead>
