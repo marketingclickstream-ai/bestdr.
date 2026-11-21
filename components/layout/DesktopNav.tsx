@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import type { NavGroup } from "@/content/site";
 import styles from "./Header.module.css";
 
@@ -62,10 +62,13 @@ export function DesktopNav({ groups }: { groups: NavGroup[] }) {
                 onClick={() => setOpen(open === i ? null : i)}
               />
               <ul className={`${styles.sub} ${g.links.length > 6 ? styles.mega : ""} ${g.alignRight ? styles.r : ""}`} id={`sub${i}`}>
-                {g.links.map((l) => (
-                  <li key={l.href + l.label} className={l.all ? styles.all : undefined}>
-                    <Link href={l.href}>{l.label}</Link>
-                  </li>
+                {g.links.map((l, li) => (
+                  <Fragment key={l.href + l.label}>
+                    {l.group && l.group !== g.links[li - 1]?.group && <li className={styles.gh} role="presentation">{l.group}</li>}
+                    <li className={l.all ? styles.all : undefined}>
+                      <Link href={l.href}>{l.label}</Link>
+                    </li>
+                  </Fragment>
                 ))}
               </ul>
             </>
