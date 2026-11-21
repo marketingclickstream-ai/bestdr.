@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ImageSlotData, Reviewer } from "@/content/types";
+import { reviewerLine } from "@/lib/reviewers";
 import { ImageSlot } from "../ui/ImageSlot";
 import type { Crumb } from "@/lib/schema";
 import { longDate } from "@/lib/format";
@@ -37,6 +38,7 @@ export interface HeroProps {
 }
 
 export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage, plate, plateCaption, plateSlot, shortAnswers }: HeroProps) {
+  const rl = reviewerLine(reviewer);
   return (
     <section className={styles.hero} id="top">
       <div className="wrap">
@@ -49,13 +51,13 @@ export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage,
             </h1>
             <p className={styles.dek}><Rich text={dek} /></p>
             <p className={styles.by}>
-              {reviewer ? (
+              {rl.named ? (
                 <>
-                  Reviewed by <b>{reviewer.name}</b>, {reviewer.credential}, on {longDate(reviewer.reviewedOn)}. {reviewer.isSample && <SampleChip />}
+                  Reviewed by <b>{rl.name}</b>, {rl.credential}, on {longDate(rl.reviewedOn)}.
                   <FootRef n={1} id="r1" />
                 </>
               ) : (
-                <>Medical review is pending. No reviewer is named yet.</>
+                <>{rl.pending}</>
               )}
             </p>
             {figure && (
