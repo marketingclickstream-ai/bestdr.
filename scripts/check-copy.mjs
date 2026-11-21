@@ -9,7 +9,8 @@
 //   node scripts/check-copy.mjs --no-shape   skip the blog post length and link checks
 //   node scripts/check-copy.mjs FILE...      scan only the named files
 //
-// Severity: "error" = banned word, dash, hospital or doctor name, regulated term, not-X-but-Y.
+// Severity: "error" = banned word, dash, hospital or doctor name, regulated term, not-X-but-Y, "not only",
+//           "rather than" contrasts, invisible Unicode (zero-width, BOM, soft hyphen), Hinglish banned traps.
 //           "warn"  = heuristics that need a human look (triads, title-case headings, post shape),
 //                     and any finding on a comment line.
 // Add to package.json scripts:  "check:copy": "node scripts/check-copy.mjs"
@@ -45,6 +46,22 @@ const BANNED = [
   ["cure", /\bcure(?:s|d)?\b/gi],
   ["miracle", /\bmiracles?\b|\bmiraculous\b/gi],
   ["instant results", /\binstant(?:ly)?\s+results?\b|\binstant\b/gi],
+  // Roman-script Hinglish traps (the English forms above already catch "safe hai", "best doctor", "offer").
+  ["Hinglish trap: sasta", /\bsast(?:a|e|i)\b/gi],
+  ["Hinglish trap: bina dard", /\bbina\s+dard\b|\bbinaa?\s+dard\b/gi],
+  ["Hinglish trap: hamesha ke liye", /\bhamesha\s+ke\s+liye\b/gi],
+];
+
+// Invisible characters that hide in pasted text. Errors everywhere, including comments.
+const INVISIBLE = [
+  ["zero-width space (U+200B)", /\u200B/g],
+  ["zero-width non-joiner (U+200C)", /\u200C/g],
+  ["zero-width joiner (U+200D)", /\u200D/g],
+  ["word joiner or invisible operator (U+2060 to U+2064)", /[\u2060-\u2064]/g],
+  ["byte order mark (U+FEFF)", /\uFEFF/g],
+  ["soft hyphen (U+00AD)", /\u00AD/g],
+  ["directional mark (U+200E, U+200F, U+202A to U+202E)", /[\u200E\u200F\u202A-\u202E]/g],
+  ["Mongolian vowel separator (U+180E)", /\u180E/g],
 ];
 
 const DASHES = [["em dash", /—/g], ["en dash", /–/g], ["double hyphen", /\s--\s/g]];
@@ -73,6 +90,7 @@ const BOTOX_BLOCKED_LINE = /^\s*(?:slug|title|excerpt|name|menuName|label|alt|an
 const BOTOX_PATH_ALLOW = /content[\\/]slugs\.ts$/; // slug constants mention the alternate spelling in code
 
 const HEURISTIC_ERR = [
+  ["not only", /\bnot\s+only\b|\bnot\s+just\b/gi],
   ["not-X-but-Y", /\bnot\s+(?:just|only|merely|simply)\b/gi],
   ["not-X-but-Y", /\b(?:is|are|was|were|does|do|did)\s+not\s+[^.;:!?]{1,60},\s+(?:but|it\s+(?:is|'s)|they\s+are)\b/gi],
   ["not-X-but-Y", /\b(?:isn't|aren't|it's\s+not|it\s+is\s+not|this\s+is\s+not|that\s+is\s+not)\s+[^.;:!?]{1,60}[,;]\s+(?:but|it's|it\s+is|this\s+is)\b/gi],
@@ -84,9 +102,10 @@ const HEURISTIC_ERR = [
 ];
 
 // Three single words in a row ("A, B, and C") are often a real list, so this is a warning only.
+// "rather than" is often a real clinical comparison (fat rather than gland), so it is a warning for a human look.
+const RATHER = /\brather\s+than\b/g;
 const TRIAD = /(?<![\w-])([A-Za-z-]+), ([A-Za-z-]+),? (?:and|or) ([A-Za-z-]+)(?=[.;:)]|$)/g;
 // Title-case headings: three or more capitalised words after the first.
-const RATHER = /\brather\s+than\b/gi;
 const TITLE_CASE_H2 = /^##\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+){2,}\s*$/;
 
 // ---------- helpers ----------
@@ -107,6 +126,7 @@ function walk(dir, out = []) {
 const brandless = (s) => s.replace(/bestdoctorsin(?:\.com)?/gi, (m) => " ".repeat(m.length));
 const isComment = (line) => /^\s*(?:\/\/|\/\*|\*)/.test(line);
 const findings = [];
+const notes = [];
 function add(file, lineNo, severity, rule, text, match) {
   const i = Math.max(0, text.indexOf(match));
   const start = Math.max(0, i - 25);
@@ -147,6 +167,7 @@ function scanFile(abs) {
     const tag = comment ? " [comment]" : "";
     scanPatterns(rel, lineNo, text, BANNED, sev("error"), tag);
     scanPatterns(rel, lineNo, text, DASHES, sev("error"), tag);
+    scanPatterns(rel, lineNo, raw, INVISIBLE, "error", tag);
     // hospital and doctor names
     for (const [rule, re] of NAMES) {
       re.lastIndex = 0;
@@ -166,16 +187,16 @@ function scanFile(abs) {
       if (!allowBotox) add(rel, lineNo, sev("error"), "Botox brand outside the botulinum toxin files" + tag, text, bm[0]);
       else if (BOTOX_BLOCKED_LINE.test(raw)) add(rel, lineNo, sev("error"), "Botox brand in a slug, title or label" + tag, text, bm[0]);
     }
+    // open work markers (reported, not failures)
+    for (const mk of text.matchAll(/TODO-VERIFY|NEEDS REAL DATA/g)) notes.push({ file: rel, line: lineNo, mark: mk[0] });
     // warnings
-    RATHER.lastIndex = 0;
-    let rm;
-    while ((rm = RATHER.exec(text))) add(rel, lineNo, "warn", "rather than (check for a not-X-but-Y contrast)", text, rm[0]);
     TRIAD.lastIndex = 0;
     let tm;
     while ((tm = TRIAD.exec(text))) {
       if (comment || /^\s*(?:import|export|const|type|interface|##)/.test(raw)) continue;
       add(rel, lineNo, "warn", "possible forced triad", text, tm[0]);
     }
+    for (const rm of text.matchAll(RATHER)) add(rel, lineNo, "warn", "rather than contrast (check both halves carry information)", text, rm[0]);
     if (TITLE_CASE_H2.test(raw.trim())) add(rel, lineNo, "warn", "heading not in sentence case", text, raw.trim());
   });
   if (SHAPE && /[\\/]content[\\/]blog[\\/]/.test(abs) && !/(?:base|index)\.ts$/.test(abs)) shapeCheck(rel, src);
@@ -187,6 +208,8 @@ const HUBS = {
   acne: "/acne-treatment", hydrafacial: "/hydrafacial", "botulinum-toxin": "/botulinum-toxin-injections",
   "anti-aging": "/anti-aging-treatment", prp: "/prp-treatment", "hair-transplant": "/hair-transplant",
 };
+
+const PLASTIC_HUBS = ["/plastic-surgery", "/tummy-tuck", "/rhinoplasty", "/breast-augmentation", "/breast-reduction", "/blepharoplasty", "/otoplasty"];
 
 function plainWords(body) {
   const t = body
@@ -215,7 +238,8 @@ function shapeCheck(rel, src) {
     const wshape = (rule, msg) => findings.push({ file: rel, line: lineNo, severity: "warn", rule: `post shape: ${rule}`, ctx: `${slug}: ${msg}` });
     if (title.length > 60) wshape("title", `${title.length} characters (max 60)`);
     if (excerpt.length > 155) wshape("meta", `${excerpt.length} characters (max 155)`);
-    if (w.length < 600 || w.length > 900) wshape("length", `${w.length} words (target 600 to 900)`);
+    const [lo, hi] = /^plastic-/.test(stem) ? [700, 1100] : [600, 900];
+    if (w.length < lo || w.length > hi) wshape("length", `${w.length} words (target ${lo} to ${hi})`);
     const lineArr = body.trim().split("\n").map((x) => x.trim()).filter(Boolean);
     if (lineArr[0] !== "[[reviewer]]") wshape("reviewer", "first line is not [[reviewer]]");
     const intro = lineArr.find((l, i) => i > 0 && !/^(##|-|>|\[\[)/.test(l)) ?? "";
@@ -227,8 +251,9 @@ function shapeCheck(rel, src) {
     if (!/\[\[sources:/.test(body)) wshape("sources", "no sources line");
     if (!/^##\s/m.test(body)) wshape("headings", "no H2 sections");
     if (hub && !body.includes(`[[link: ${hub} |`)) wshape("links", `no link to hub ${hub}`);
+    if (/^plastic-/.test(stem) && !PLASTIC_HUBS.some((h) => body.includes(`[[link: ${h} |`))) wshape("links", "no link to a plastic surgery pillar or hub");
     if (!/\[\[link:\s*\/cost\//.test(body)) wshape("links", "no link to a cost page");
-    if (!/\[\[link:\s*\/[a-z-]+-in-(?:delhi|gurgaon|lucknow|kanpur)\s*\|/.test(body)) wshape("links", "no link to a city page");
+    if (!/^plastic-/.test(stem) && !/\[\[link:\s*\/[a-z-]+-in-(?:delhi|gurgaon|lucknow|kanpur)\s*\|/.test(body)) wshape("links", "no link to a city page");
     if ((body.match(/\[\[link:\s*\/learn\//g) ?? []).length < 2) wshape("links", "fewer than 2 related post links");
     // FAQ lines must hold exactly one separator and no nested markup.
     for (const m of body.matchAll(/\[\[faq:([^\n]*)\]\]$/gm)) {
@@ -254,6 +279,12 @@ for (const f of findings) {
 for (const [file, list] of byFile) {
   console.log(`\n${file}`);
   for (const f of list) console.log(`  ${f.line}: [${f.severity}] ${f.rule}: ${f.ctx}`);
+}
+if (notes.length) {
+  const by = new Map();
+  for (const n of notes) by.set(n.file, (by.get(n.file) ?? 0) + 1);
+  console.log("\nOpen markers (TODO-VERIFY, NEEDS REAL DATA) by file:");
+  for (const [f, c] of by) console.log(`  ${f}: ${c}`);
 }
 console.log(`\nScanned ${files.length} files. ${errors.length} errors, ${warns.length} warnings.`);
 process.exit(errors.length > 0 || (STRICT && warns.length > 0) ? 1 : 0);
