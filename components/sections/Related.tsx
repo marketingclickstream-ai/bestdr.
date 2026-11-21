@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BlogPost, City, Treatment } from "@/content/types";
 import { inrRange } from "@/lib/format";
 import { isLinkVisible } from "@/lib/pages";
+import { isPlaceholderReviewerId } from "@/lib/reviewers";
 import { ReadThumb1, ReadThumb2, ReadThumb3, TreatmentIcon1, TreatmentIcon2, TreatmentIcon3 } from "../illustrations/Plates";
 import { ImageSlot } from "../ui/ImageSlot";
 import { Rich } from "../ui/Rich";
@@ -27,7 +28,7 @@ export function RelatedReads({ posts }: { posts: BlogPost[] }) {
               <div>
                 <h3><Link href={`/learn/${p.slug}`}>{p.title}</Link></h3>
                 <p>{p.excerpt}</p>
-                <p className="meta">{p.minutes} min read {(!p.published || !p.reviewerId || p.reviewerId.startsWith("sample")) && <SampleChip label="Pending review" />}</p>
+                <p className="meta">{p.minutes} min read {(!p.published || !p.reviewerId || isPlaceholderReviewerId(p.reviewerId)) && <SampleChip label="Pending review" />}</p>
               </div>
             </li>
           );
