@@ -13,6 +13,7 @@
 .acc>li>button[aria-expanded=true]::after{content:"\2212"}
 .acc ul{list-style:none;margin:0;padding:0 0 10px 6px}
 .acc ul[hidden]{display:none}
+.acc .gh{padding:12px 0 0;font:600 12px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .acc ul a,.sres a{display:flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font-size:16px}
 .sres a{border-bottom:1px solid var(--bd)}
 .mpF{border-top:1px solid var(--p900);padding:10px var(--g) calc(10px + env(safe-area-inset-bottom,0px));display:grid;gap:8px;background:var(--bg)}
