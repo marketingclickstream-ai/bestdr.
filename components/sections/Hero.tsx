@@ -16,6 +16,8 @@ export interface HeroFigure {
   value: string;
   chip: string | null;
   note?: string;
+  /** Show the value as text without "Rs" (used for "To be confirmed"). */
+  pending?: boolean;
   linkText: string;
   href: string;
 }
@@ -62,7 +64,7 @@ export function Hero({ crumbs, title, titleEm, dek, reviewer, figure, waMessage,
                   {figure.label} {figure.chip && <SampleChip label={figure.chip} />}
                   <FootRef n={2} id="r2" />
                 </p>
-                <p className={styles.v}><small>Rs</small> {figure.value}</p>
+                <p className={styles.v}>{figure.pending ? figure.value : <><small>Rs</small> {figure.value}</>}</p>
                 <a className={styles.s} href={figure.href}>{figure.linkText}</a>
               </div>
             )}
