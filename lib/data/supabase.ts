@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import type {
-  BlogPost, City, CityTreatmentPage, CostLine, FaqRow, IncludeKey, IncludeState, Reviewer, SiteData, Treatment, VideoItem,
+  BlogPost, City, CityTreatmentPage, CostLine, FaqRow, IncludeKey, IncludeKeyDef, IncludeState, Reviewer, SiteData, Treatment, TopicCategory, VideoItem,
 } from "@/content/types";
+import { TOPIC_CATEGORIES } from "@/content/types";
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "../env";
 
 // Row types follow supabase/migrations/0001_init.sql. Row level security means the anon key
@@ -24,7 +25,13 @@ export function mapCity(r: Row): City {
 
 export function mapTreatment(r: Row): Treatment {
   return {
-    slug: str(r.slug), name: str(r.name), menuName: str(r.menu_name), alternateName: str(r.alternate_name) || undefined, summary: str(r.summary),
+    slug: str(r.slug),
+    category: (TOPIC_CATEGORIES as readonly string[]).includes(str(r.category)) ? (str(r.category) as TopicCategory) : "surgery",
+    careKind: r.care_kind === "surgical" || r.care_kind === "non-surgical" ? r.care_kind : undefined,
+    includeKeys: Array.isArray(r.include_keys) && r.include_keys.length > 0 ? arr<IncludeKeyDef>(r.include_keys) : undefined,
+    costPage: r.cost_page ? obj(r.cost_page, undefined as never) : undefined,
+    seo: r.seo ? obj(r.seo, undefined as never) : undefined,
+    name: str(r.name), menuName: str(r.menu_name), alternateName: str(r.alternate_name) || undefined, summary: str(r.summary),
     procedure: obj(r.procedure, { procedureType: "", bodyLocation: "", howPerformed: "", preparation: "", followup: "" }),
     nationalRange: r.national_range ? obj(r.national_range, undefined as never) : undefined,
     costFactors: arr(r.cost_factors), deskWork: str(r.desk_work), cardBlurb: str(r.card_blurb),
@@ -39,8 +46,9 @@ export function mapTreatment(r: Row): Treatment {
 const INCLUDE_STATES: IncludeState[] = ["included", "excluded", "varies", "unknown"];
 export function mapPage(r: Row): CityTreatmentPage {
   const inc = obj<Record<string, string>>(r.includes, {});
-  const keys: IncludeKey[] = ["surgeon", "anaesthesia", "theatre", "stay", "consumables", "followups", "medicines"];
-  const includes = Object.fromEntries(keys.map((k) => [k, INCLUDE_STATES.includes(inc[k] as IncludeState) ? inc[k] : "unknown"])) as Record<IncludeKey, IncludeState>;
+  const includes: Partial<Record<IncludeKey, IncludeState>> = {};
+  for (const [k, v] of Object.entries(inc)) includes[k] = INCLUDE_STATES.includes(v as IncludeState) ? (v as IncludeState) : "unknown";
+  for (const k of ["surgeon", "anaesthesia", "theatre", "stay", "consumables", "followups", "medicines"]) includes[k] ??= "unknown"; // old rows
   const min = num(r.price_min_inr), max = num(r.price_max_inr);
   return {
     treatmentSlug: str(r.treatment_slug), citySlug: str(r.city_slug), isPlaceholder: bool(r.is_placeholder), published: bool(r.published),
@@ -55,6 +63,8 @@ export function mapPage(r: Row): CityTreatmentPage {
     beforeAfter: arr(r.before_after), localCopy: arr<string>(r.local_copy),
     images: r.images ? obj(r.images, undefined as never) : undefined,
     localNotes: arr(r.local_notes),
+    seoTitle: str(r.seo_title) || undefined, h1: str(r.h1) || undefined, intro: str(r.intro) || undefined,
+    sections: Array.isArray(r.sections) && r.sections.length > 0 ? arr(r.sections) : undefined,
   };
 }
 
