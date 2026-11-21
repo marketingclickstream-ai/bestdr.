@@ -1,4 +1,4 @@
-import type { Reviewer, TreatmentContent } from "@/content/types";
+import type { CareKind, Reviewer, TreatmentContent } from "@/content/types";
 import { longDate } from "@/lib/format";
 import { ReviewerPortrait } from "../illustrations/Plates";
 import { FootRef } from "../ui/FootRef";
@@ -7,42 +7,53 @@ import { Rich } from "../ui/Rich";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
 import { WhatsAppButton } from "../ui/WhatsAppButton";
-import { DISCLAIMER } from "@/content/site";
+import { DISCLAIMER, DISCLAIMER_GENERAL } from "@/content/site";
 import styles from "./Reviewer.module.css";
 
-export function ChooseSurgeonSection() {
+export function ChooseSurgeonSection({ kind = "surgical" }: { kind?: CareKind }) {
+  const non = kind === "non-surgical";
   return (
     <section className="sec" id="choose">
-      <SectionHead>How to choose a surgeon</SectionHead>
-      <p className="none">No surgeon is <i>listed yet.</i></p>
-      <p className="lead">We list a surgeon only after registration and accreditation are checked, in this order. We do not rank surgeons against each other.</p>
+      <SectionHead>{non ? "How to choose a doctor and a clinic" : "How to choose a surgeon"}</SectionHead>
+      <p className="none">{non ? <>No doctor is <i>listed yet.</i></> : <>No surgeon is <i>listed yet.</i></>}</p>
+      <p className="lead">{non ? "We list a doctor only after registration is checked, and a clinic only after its papers are seen, in this order. We do not rank doctors against each other." : "We list a surgeon only after registration and accreditation are checked, in this order. We do not rank surgeons against each other."}</p>
       <ol className="steps">
-        <li><div><b>Registration</b><span>We look the surgeon up on the public register of the state medical council ourselves.</span></div></li>
-        <li><div><b>Hospital</b><span>We ask for its accreditation certificate.</span></div></li>
+        <li><div><b>Registration</b><span>{non ? "We look the doctor up on the public register of the state medical council ourselves." : "We look the surgeon up on the public register of the state medical council ourselves."}</span></div></li>
+        <li><div><b>{non ? "Clinic" : "Hospital"}</b><span>{non ? "We ask for its registration and, where it has one, its accreditation certificate." : "We ask for its accreditation certificate."}</span></div></li>
         <li><div><b>Date</b><span>We record the day we checked, and show it.</span></div></li>
       </ol>
       <div className="spec" role="group" aria-label="Format example of a verification card" style={{ marginTop: 22 }}>
-        <span className="tag">Format example, not a real surgeon</span>
+        <span className="tag">{non ? "Format example, not a real doctor" : "Format example, not a real surgeon"}</span>
         <dl>
           <div><dt>Council</dt><dd>State medical council <span className="blank" /></dd></div>
           <div><dt>Degree</dt><dd><span className="blank" /> as on the certificate</dd></div>
-          <div><dt>Hospital</dt><dd>Accreditation body <span className="blank" />, valid till <span className="blank" /></dd></div>
+          <div><dt>{non ? "Clinic" : "Hospital"}</dt><dd>{non ? "Registration and, where held, accreditation" : "Accreditation body"} <span className="blank" />, valid till <span className="blank" /></dd></div>
           <div><dt>Checked on</dt><dd><span className="blank" /> by our staff</dd></div>
         </dl>
       </div>
       <details className="more">
-        <summary>Five questions for any surgeon</summary>
+        <summary>{non ? "Five questions for any doctor" : "Five questions for any surgeon"}</summary>
         <div className="in">
-          <ul className="plain">
-            <li>Are you registered with a state medical council, and can I check the public register?</li>
-            <li>How many of this operation do you do in a year?</li>
-            <li>Which method will you use on me, and where will the scars be?</li>
-            <li>Which anaesthesia, and who gives it?</li>
-            <li>What happens if I need a second operation, and who pays?</li>
-          </ul>
+          {non ? (
+            <ul className="plain">
+              <li>Are you registered with a state medical council, and can I check the public register?</li>
+              <li>Who will carry out the treatment, you or someone else, and what is their training?</li>
+              <li>Which product or device will be used, and can I see it opened or its sealed pack?</li>
+              <li>What side effects are common, and what should I do if I have one?</li>
+              <li>What happens if I need a repeat visit or I am not happy, and who pays?</li>
+            </ul>
+          ) : (
+            <ul className="plain">
+              <li>Are you registered with a state medical council, and can I check the public register?</li>
+              <li>How many of this operation do you do in a year?</li>
+              <li>Which method will you use on me, and where will the scars be?</li>
+              <li>Which anaesthesia, and who gives it?</li>
+              <li>What happens if I need a second operation, and who pays?</li>
+            </ul>
+          )}
         </div>
       </details>
-      <p><Rich text="Take our list with you: [questions to ask your surgeon](/learn/questions-to-ask-your-plastic-surgeon). [How we write and review](/editorial-policy) this page is public." /></p>
+      <p><Rich text={non ? "[How we write and review](/editorial-policy) this page is public." : "Take our list with you: [questions to ask your surgeon](/learn/questions-to-ask-your-plastic-surgeon). [How we write and review](/editorial-policy) this page is public."} /></p>
     </section>
   );
 }
@@ -106,10 +117,10 @@ export function ReviewerSection({ reviewer, content }: { reviewer: Reviewer | nu
   );
 }
 
-export function DisclaimerSection() {
+export function DisclaimerSection({ kind = "surgical" }: { kind?: CareKind }) {
   return (
     <section className="sec" id="disclaimer" style={{ paddingTop: 0 }}>
-      <p className="disc" style={{ maxWidth: "none" }}>{DISCLAIMER} <Rich text="[Medical disclaimer](/medical-disclaimer)" /></p>
+      <p className="disc" style={{ maxWidth: "none" }}>{kind === "non-surgical" ? DISCLAIMER_GENERAL : DISCLAIMER} <Rich text="[Medical disclaimer](/medical-disclaimer)" /></p>
     </section>
   );
 }
