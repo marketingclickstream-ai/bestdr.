@@ -9,8 +9,10 @@ import { liposuctionContent } from "@/content/liposuction";
 import { liposuctionPosts } from "@/content/blog/liposuction";
 import { gynecomastiaPosts } from "@/content/blog/gynecomastia";
 
+import { hasCostPage } from "@/lib/topic";
+
 const NOW = new Date("2026-11-10");
-const written = fixtures.pages.filter((p) => !p.isPlaceholder);
+const written = fixtures.pages.filter((p) => !p.isPlaceholder && ["gynecomastia-surgery", "liposuction"].includes(p.treatmentSlug));
 
 describe("city pages as data", () => {
   it("has 8 written pages: gynecomastia and liposuction in four cities", () => {
@@ -117,9 +119,9 @@ describe("blog integration", () => {
       const path = href.split("#")[0] ?? "";
       if (path === "" || path === "/") return true;
       if (/^\/learn\/[a-z0-9-]+$/.test(path)) return fixtures.posts.some((p) => `/learn/${p.slug}` === path);
-      if (/^\/cost\/[a-z0-9-]+$/.test(path)) return fixtures.treatments.some((t) => t.nationalRange && `/cost/${t.slug}` === path);
+      if (/^\/cost\/[a-z0-9-]+$/.test(path)) return fixtures.treatments.some((t) => hasCostPage(t) && `/cost/${t.slug}` === path);
       const slug = path.slice(1);
-      return Boolean(resolveSlug(fixtures, slug)) || ["plastic-surgery", "cost", "learn", "videos", "how-we-verify-surgeons", "medical-review-board", "editorial-policy", "medical-disclaimer", "about", "contact", "privacy", "terms"].includes(slug);
+      return Boolean(resolveSlug(fixtures, slug)) || ["plastic-surgery", "treatments", "cost", "learn", "videos", "how-we-verify-surgeons", "medical-review-board", "editorial-policy", "medical-disclaimer", "about", "contact", "privacy", "terms"].includes(slug);
     };
     const bad: string[] = [];
     for (const p of fixtures.posts) {
