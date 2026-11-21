@@ -40,7 +40,7 @@ export function RelatedReads({ posts }: { posts: BlogPost[] }) {
 
 export interface TreatmentCard { treatment: Treatment; rangeLabel: string; range: string }
 
-export function RelatedTreatments({ cards }: { cards: TreatmentCard[] }) {
+export function RelatedTreatments({ cards, nonSurgical = false }: { cards: TreatmentCard[]; nonSurgical?: boolean }) {
   const shown = cards.filter((c) => isLinkVisible(`/${c.treatment.slug}`));
   if (shown.length === 0) return null;
   return (
@@ -58,14 +58,15 @@ export function RelatedTreatments({ cards }: { cards: TreatmentCard[] }) {
                 <p>{t.cardBlurb}</p>
                 <dl>
                   <div><dt>{rangeLabel}</dt><dd>{range}</dd></div>
-                  <div><dt>Desk work</dt><dd>{t.deskWork}</dd></div>
+                  <div><dt>{t.category === "surgery" ? "Desk work" : "Back to routine"}</dt><dd>{t.deskWork}</dd></div>
                 </dl>
               </div>
             </li>
           );
         })}
       </ul>
-      {isLinkVisible("/plastic-surgery") && <p style={{ marginTop: 16 }}><Rich text="Browse [all plastic surgery](/plastic-surgery) pages." /></p>}
+      {!nonSurgical && isLinkVisible("/plastic-surgery") && <p style={{ marginTop: 16 }}><Rich text="Browse [all plastic surgery](/plastic-surgery) pages." /></p>}
+      {nonSurgical && isLinkVisible("/treatments") && <p style={{ marginTop: 16 }}><Rich text="Browse [all skin, hair and injectable treatments](/treatments)." /></p>}
     </section>
   );
 }
