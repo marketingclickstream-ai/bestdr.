@@ -31,6 +31,8 @@ export interface GateInput {
   jsonLdValid: boolean;
   /** True while the page still shows a Sample / To be confirmed / Pending chip (QA-06). */
   showsPlaceholders?: boolean;
+  /** The include keys that apply to this treatment (surgical set by default). G2 needs 5 of them answered. */
+  includeKeys?: readonly IncludeKey[];
 }
 
 export interface GateContext {
@@ -93,8 +95,9 @@ export function evaluatePublishGate(input: GateInput, ctx: GateContext): GateRep
 
   // G2 includes / excludes
   {
-    const known = INCLUDE_KEYS.filter((k: IncludeKey) => page.includes[k] !== "unknown").length;
-    add("G2", "What the price includes", known >= 5, `${known} of 7 answered, need 5`);
+    const keys: readonly IncludeKey[] = input.includeKeys ?? INCLUDE_KEYS;
+    const known = keys.filter((k: IncludeKey) => (page.includes[k] ?? "unknown") !== "unknown").length;
+    add("G2", "What the price includes", known >= 5, `${known} of ${keys.length} answered, need 5`);
   }
 
   // G3 local hospital type information
