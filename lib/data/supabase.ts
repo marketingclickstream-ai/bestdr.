@@ -4,6 +4,7 @@ import type {
 } from "@/content/types";
 import { TOPIC_CATEGORIES } from "@/content/types";
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "../env";
+import { specialtyOfReviewerId } from "../reviewers";
 
 // Row types follow supabase/migrations/0001_init.sql. Row level security means the anon key
 // only ever sees published rows, so no published filter is repeated here.
@@ -16,7 +17,7 @@ const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const obj = <T>(v: unknown, fallback: T): T => (v && typeof v === "object" ? (v as T) : fallback);
 
 export function mapReviewer(r: Row): Reviewer {
-  return { id: str(r.id), name: str(r.name), credential: str(r.credential), reviewedOn: str(r.reviewed_on), isSample: bool(r.is_sample), photoConsent: bool(r.photo_consent) };
+  return { id: str(r.id), name: str(r.name), credential: str(r.credential), reviewedOn: str(r.reviewed_on), isSample: bool(r.is_sample), photoConsent: bool(r.photo_consent), specialty: specialtyOfReviewerId(str(r.id)) };
 }
 
 export function mapCity(r: Row): City {
