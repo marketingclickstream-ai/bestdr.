@@ -34,7 +34,7 @@ export function CityTreatmentView({ site, t, c, p }: { site: SiteData; t: Treatm
 
   const kind = careKindOf(t);
   const non = kind === "non-surgical";
-  const drawn = t.category === "surgery"; // the drawn plates (chest, compression garment, body areas) belong to plastic surgery pages
+  const drawn = t.category === "surgery" && !t.display?.noPlates; // the drawn plates (chest, compression garment, body areas) belong to plastic surgery pages
   const unit = costUnitOf(t);
   const priceLabel = priceLabelOf(t);
   const path = `/${t.slug}-in-${c.slug}`;
