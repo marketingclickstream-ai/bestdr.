@@ -2,6 +2,7 @@ import { cache } from "react";
 import type { BlogPost, City, CityTreatmentPage, CostLine, FaqRow, Reviewer, SiteData, Treatment, VideoItem } from "@/content/types";
 import { HAS_SUPABASE } from "../env";
 import { fixtures } from "./fixtures";
+import { normalizeSite } from "./normalize";
 
 /** A connected database that returns no treatments is almost always "rows not published" or a stale read. Say so in the logs. */
 function warnIfEmpty(site: SiteData): void {
@@ -23,7 +24,7 @@ export const getSite = cache(async (): Promise<SiteData> => {
   if (!HAS_SUPABASE) return fixtures;
   const { loadFromSupabase } = await import("./supabase");
   try {
-    const site = await loadFromSupabase();
+    const site = normalizeSite(await loadFromSupabase());
     warnIfEmpty(site);
     return site;
   } catch (err) {
