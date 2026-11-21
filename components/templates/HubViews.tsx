@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { City, SiteData } from "@/content/types";
 import { isLinkVisible } from "@/lib/pages";
-import { careKindOf, groupByCategory, priceLabelOf } from "@/lib/topic";
+import { careKindOf, groupByCategory, hasHub, isCostOnlyTopic, priceLabelOf } from "@/lib/topic";
 import { breadcrumbList, graph, itemList, organization } from "@/lib/schema";
 import { inrRange } from "@/lib/format";
 import { Rich } from "../ui/Rich";
@@ -12,7 +12,9 @@ import { SimplePage } from "./SimplePage";
 /** /plastic-surgery: every plastic surgery page, linked once each. Skin, hair and injectable topics are on /treatments. */
 export function PlasticSurgeryHub({ site }: { site: SiteData }) {
   const crumbs = [{ name: "Home", path: "/" }, { name: "Plastic surgery", path: "/plastic-surgery" }];
-  const shown = site.treatments.filter((t) => t.category === "surgery" && isLinkVisible(`/${t.slug}`));
+  const shown = site.treatments.filter((t) => t.category === "surgery" && hasHub(t) && isLinkVisible(`/${t.slug}`));
+  // Cost-only topics have no guide page of their own, only a national cost page.
+  const costOnly = site.treatments.filter((t) => isCostOnlyTopic(t) && isLinkVisible(`/cost/${t.slug}`));
   return (
     <SimplePage
       crumbs={crumbs}
@@ -21,21 +23,30 @@ export function PlasticSurgeryHub({ site }: { site: SiteData }) {
       jsonLd={graph(organization(), breadcrumbList(crumbs), itemList("Plastic surgery guides", shown.map((t) => ({ name: t.name, path: `/${t.slug}` }))))}
       sections={[{ heading: "How we write these pages", paragraphs: ["See our [editorial policy](/editorial-policy) and [how we check surgeons](/how-we-verify-surgeons).", "Looking for skin, hair or injectable care? See [all treatments](/treatments)."] }]}
       extra={
-        <section className="sec tint" id="treatments">
-          <SectionHead>Operations</SectionHead>
-          <ul className="rr full">
-            {shown.map((t) => (
-              <li key={t.slug}>
-                <div />
-                <div>
-                  <h3><Link href={`/${t.slug}`}>{t.name}</Link></h3>
-                  <p>{t.summary}</p>
-                  <p className="meta">{t.content ? "Full guide" : <>Being prepared <SampleChip label="Draft" /></>}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <>
+          <section className="sec tint" id="treatments">
+            <SectionHead>Operations</SectionHead>
+            <ul className="rr full">
+              {shown.map((t) => (
+                <li key={t.slug}>
+                  <div />
+                  <div>
+                    <h3><Link href={`/${t.slug}`}>{t.name}</Link></h3>
+                    <p>{t.summary}</p>
+                    <p className="meta">{t.content ? "Full guide" : <>Being prepared <SampleChip label="Draft" /></>}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+          {costOnly.length > 0 && (
+            <section className="sec" id="more-costs">
+              <SectionHead>Cost guides for other operations</SectionHead>
+              <p>These operations have a national cost guide: what changes the price and what a written quote should list.</p>
+              <ul className="plain">{costOnly.map((t) => <li key={t.slug}><Link href={`/cost/${t.slug}`}>{t.name} cost in India</Link></li>)}</ul>
+            </section>
+          )}
+        </>
       }
     />
   );
