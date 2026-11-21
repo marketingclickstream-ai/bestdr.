@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { BlogPost, SiteData } from "@/content/types";
 import { findReviewer } from "@/lib/data";
+import { reviewerLine as reviewerLineOf } from "@/lib/reviewers";
 import { longDate } from "@/lib/format";
 import { isLinkVisible } from "@/lib/pages";
 import { parseBody, postFaqs, type PostBlock } from "@/lib/blog-body";
@@ -104,9 +105,10 @@ export function LearnPost({ site, post }: { site: SiteData; post: BlogPost }) {
   // The mid-post banner goes before the H2 nearest the middle of the article.
   const h2s = blocks.map((b, i) => (b.kind === "h2" ? i : -1)).filter((i) => i >= 0);
   const bannerAt = h2s.length >= 3 ? (h2s[Math.floor(h2s.length / 2)] ?? -1) : -1;
-  const reviewerLine = reviewer
-    ? <>Reviewed by <b>{reviewer.name}</b>, {reviewer.credential}, on {longDate(reviewer.reviewedOn)}. {reviewer.isSample && <SampleChip />}</>
-    : <>Medical review is pending. No reviewer is named yet.</>;
+  const rl = reviewerLineOf(reviewer);
+  const reviewerLine = rl.named
+    ? <>Reviewed by <b>{rl.name}</b>, {rl.credential}, on {longDate(rl.reviewedOn)}.</>
+    : <>{rl.pending}</>;
   const ld = graph(organization(), breadcrumbList(crumbs), blogPosting(post, reviewer), faqs.length > 0 && faqPage(faqs));
   const Thumb = thumbs[post.thumb];
   const hasReviewerLine = blocks.some((b) => b.kind === "reviewer");
