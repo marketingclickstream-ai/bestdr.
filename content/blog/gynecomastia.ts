@@ -96,7 +96,7 @@ A doctor will usually do more than feel the chest:
 - Look at the skin and the nipple for changes.
 ## When a scan or blood tests are used
 An ultrasound shows whether there is true gland tissue and how much. Blood tests look at hormones and at liver, kidney or thyroid function. Neither is needed for every patient. They are more likely if the swelling is new, one-sided, painful or very hard, or if the story points to a hormone cause. If a doctor orders a test, ask what question it answers.
-## When it is not only fat or gland
+## When the cause is fat, gland or both
 Rarely, a firm lump is something else and needs its own work-up. Do not wait for it to become obvious. See a doctor soon if you have:
 - a hard, fixed lump on one side
 - bloody nipple discharge
@@ -207,7 +207,7 @@ Some men decide that surgery is the better route once they understand the tissue
 Many men spend months on chest routines before asking anyone. A faster route is a short examination. A doctor can tell in one visit whether you are dealing with fat, gland or both, and that changes how you spend the next six months.
 ## Training around the problem
 If you are training with a firm gland disc and you want to keep going, there is no harm in doing so unless you have pain or a lump. Some men prefer lighter chest work and more back, shoulders and legs while they decide what to do. That is a personal choice, not a medical rule. Wear a snug layer if the chest bothers you in the gym, and do not tape or bind it tightly for long hours, because that can irritate the skin.
-[[faq: Can exercise cure gynecomastia? | Exercise cannot remove gland tissue. It can help reduce overall fat and improve muscle tone, which may lessen a soft, fatty chest. A doctor can tell you how much of your chest is gland.]]
+[[faq: Can exercise remove gynecomastia? | Exercise cannot remove gland tissue. It can help reduce overall fat and improve muscle tone, which may lessen a soft, fatty chest. A doctor can tell you how much of your chest is gland.]]
 [[faq: Do push-ups reduce man boobs? | Push-ups strengthen the chest muscle but do not burn fat from the chest alone. If the fullness is gland, push-ups will not shrink it and may make it more noticeable.]]
 When you are ready to ask a real person, message us on WhatsApp. If you already have a quote from a clinic, the quote checker shows the lines worth comparing. No rush.
 [[sources: NHS patient information on gynaecomastia; Mayo Clinic patient information on gynecomastia.]]
@@ -252,7 +252,7 @@ If the enlargement began in the last few months and a cause is still being inves
 - you are on long-term medicines and have noticed a change
 Choosing who to see is covered in [[link: /learn/doctor-for-gynecomastia | which doctor treats gynecomastia]]. For claims about tablets and creams, read [[link: /learn/gynecomastia-tablets-creams-evidence | what the evidence says]].
 ## What a first visit may cover
-A first appointment about a new chest change often includes a list of questions, a physical exam, and sometimes blood tests. The questions can feel personal: medicines, alcohol, drug use, sleep, weight changes, any problems with the testicles or with sexual function. You do not need to prepare answers, but it helps to write down medicine names beforehand.
+A first appointment about a new chest change often includes a list of questions, a physical exam, and sometimes blood tests. The questions can feel personal: medicines, alcohol, drug use, sleep, weight changes, any problems with the testicles or with sexual function. Prepared answers are optional. Writing down medicine names beforehand helps.
 ## When no cause is found
 In a good share of men, tests come back normal and no clear trigger is found. That does not mean the doctor missed something or that you did anything wrong. It usually means a small hormone imbalance or a sensitivity of the chest tissue that cannot be traced. In that situation, the discussion turns to how much the chest bothers you and whether surgery is appropriate.
 [[faq: What causes gynecomastia? | Usually a change in the balance of oestrogen and testosterone. Triggers include puberty, certain medicines, alcohol or drug use, weight gain, some health conditions, and age. Often no single cause is found.]]
@@ -391,7 +391,7 @@ Your anaesthetist will assess your health beforehand. Ask which type is planned 
 ## Scars
 Every operation that cuts the skin leaves a mark. Cuts for liposuction are tiny. Gland excision usually leaves a small line at the edge of the areola or on the side of the chest. Skin removal leaves a longer scar. Most fade over many months, but they do not vanish, and healing varies with skin type and care. Ask your surgeon to show you where each scar will sit on your own chest.
 ## Can it come back?
-Treated gland and fat cells are removed, but the body can lay down new fat if weight rises. Gland can regrow if the cause, such as a medicine or a steroid, continues. Be cautious about any claim that it never returns.
+Treated gland and fat cells are removed, but the body can lay down new fat if weight rises. Gland tissue can build up again if the cause, such as a medicine or a steroid, continues. Be cautious about any claim that it never returns.
 ## Reducing risk
 - Share your full medical history, medicines, supplements and alcohol or drug use.
 - Stop smoking before surgery, if you smoke.
@@ -518,7 +518,7 @@ Surgery is not a first step in a teenager. It may be considered if the tissue ha
 ## Support
 Teasing and embarrassment can be harder than the chest itself. If your child is withdrawn or low, talk to the school counsellor or doctor. That counts as medical care too.
 ## Talking to the doctor as a teenager
-If you are the teenager reading this, you are allowed to ask questions. You can ask the doctor to explain things again, to speak to you and not only to your parents, and to see you alone for part of the visit. It is normal to feel awkward. Doctors see this often, and they care more about your health than about what your chest looks like.
+If you are the teenager reading this, you are allowed to ask questions. You can ask the doctor to explain things again, to speak to you as well as your parents, and to see you alone for part of the visit. It is normal to feel awkward. Doctors see this often, and they care more about your health than about what your chest looks like.
 ## School, sport and swimming
 Boys sometimes skip sport or swimming to avoid being seen. A snug, plain undershirt can help while you wait. If teasing is happening, tell a teacher or counsellor, because that is a separate problem that needs attention.
 [[faq: Does gynecomastia go away on its own? | In many teenagers it settles over months to a couple of years. It may not, particularly if it has been there for a long time, and a doctor should check for other causes.]]
@@ -536,7 +536,7 @@ Parents who would like a plain-language call before any appointment can message 
     thumb: 1,
     body: lines(`
 [[reviewer]]
-Anabolic steroids can cause gynecomastia by upsetting the body's hormone balance, and some supplements may too. Lifting itself does not create gland tissue, but a bigger chest muscle can make existing tissue more visible. If you use any of these, tell your doctor. They have heard it before, and the plan depends on the truth.
+Anabolic steroids can cause gynecomastia by upsetting the body's hormone balance, and some supplements may too. Lifting itself does not create gland tissue. A bigger chest muscle can make existing tissue more visible. If you use any of these, tell your doctor. They have heard it before, and the plan depends on the truth.
 See the main [[link: /gynecomastia-surgery | gynecomastia surgery guide]].
 ## Anabolic steroids
 Anabolic steroids raise testosterone-like activity in the body. Some of the extra hormone can be converted into oestrogen, and the body may also lower its own testosterone. The result can be breast tissue growth, often tender. This can happen during a cycle or after it. Stopping the steroid may help in the early stage, but once gland tissue has become firm, it often stays.
@@ -556,7 +556,7 @@ Read [[link: /learn/male-chest-exercise-and-fat | what chest exercise can and ca
 - When you first noticed the chest change.
 This helps the doctor look at the causes properly; see [[link: /learn/gynecomastia-causes | causes of gynecomastia]]. It also lets the anaesthetist plan with the full picture. Hiding a steroid cycle from a surgeon raises the risk of problems during and after surgery.
 ## What to stop
-Do not stop a prescribed medicine on your own. For non-prescribed steroids and supplements, talk to your doctor about stopping, especially before surgery. A doctor may want you to be off them for a period before an operation, because operating while the cause is still active risks the tissue regrowing.
+Do not stop a prescribed medicine on your own. For non-prescribed steroids and supplements, talk to your doctor about stopping, especially before surgery. A doctor may want you to be off them for a period before an operation, because operating while the cause is still active raises the chance that tissue builds up again.
 ## After surgery
 Return to training is gradual and set by your surgeon. Lifting too early can cause fluid collection or uneven healing; see [[link: /learn/gynecomastia-surgery-risks | risks and warning signs]]. If you go back on steroids, the chest tissue can return.
 > Surgery removes tissue that is already there. It does not make the body immune to whatever caused it.
@@ -568,7 +568,7 @@ Wait if you are still on a steroid cycle, if you are cutting or bulking heavily 
 - mood changes, testicular shrinkage or low desire
 Early review gives you the most options. Read [[link: /learn/gynecomastia-grades | the grades guide]] to follow what you are told.
 ## A note on privacy
-Many men worry that admitting to steroid use will be recorded and shared. A doctor keeps your information confidential in the same way as any other medical history. You can ask the clinic how your records are stored and who can see them. A surgeon cannot plan properly without this information, because anaesthesia, wound healing and the risk of regrowth all depend on it.
+Many men worry that admitting to steroid use will be recorded and shared. A doctor keeps your information confidential in the same way as any other medical history. You can ask the clinic how your records are stored and who can see them. A surgeon cannot plan properly without this information, because anaesthesia, wound healing and the chance of tissue returning all depend on it.
 ## Planning a gym break
 If you decide on surgery, expect a pause from heavy upper-body training around the operation. Some men use this time for leg work, walking and mobility. Plan it around your goals, and avoid booking a date just before a trip, a shoot or a competition.
 [[faq: Can steroids cause gynecomastia? | Yes. Anabolic steroids can disturb the hormone balance and lead to breast tissue growth. Early on it may ease when the steroid is stopped, but firm tissue often stays.]]
