@@ -39,7 +39,7 @@ export function TreatmentView({ site, t }: { site: SiteData; t: Treatment }) {
   const waMessage = `I have a question about ${t.name.toLowerCase()}`;
   const kind = careKindOf(t);
   const non = kind === "non-surgical";
-  const drawn = t.category === "surgery"; // the drawn plates (chest, compression garment, body areas) belong to plastic surgery pages
+  const drawn = t.category === "surgery" && !t.display?.noPlates; // the drawn plates (chest, compression garment, body areas) belong to plastic surgery pages
   const hub = hubCrumb(t);
   const range = t.nationalRange ? inrRange(t.nationalRange.minInr, t.nationalRange.maxInr) : null;
   const chip = t.nationalRange?.isSample ? "To be confirmed" : null;
