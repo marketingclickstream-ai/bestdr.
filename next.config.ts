@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { TOXIN_ALT_SLUG, TOXIN_SLUG } from "./content/slugs";
 
 // Content-Security-Policy. The site loads nothing from third parties except click-to-load YouTube
 // (no-cookie) frames. Next.js writes small inline scripts into static pages, so scripts allow
@@ -39,6 +40,10 @@ const config: NextConfig = {
       { source: "/blog/:slug", destination: "/learn/:slug", permanent: true },
       // The plan calls the page /how-we-work; the canonical URL is /how-we-verify-surgeons.
       { source: "/how-we-work", destination: "/how-we-verify-surgeons", permanent: true },
+      // Botulinum toxin has one live slug (content/slugs.ts). The other spelling is reserved and sends visitors to it, never a duplicate 200.
+      { source: `/${TOXIN_ALT_SLUG}`, destination: `/${TOXIN_SLUG}`, permanent: false },
+      { source: `/${TOXIN_ALT_SLUG}-in-:city`, destination: `/${TOXIN_SLUG}-in-:city`, permanent: false },
+      { source: `/cost/${TOXIN_ALT_SLUG}`, destination: `/cost/${TOXIN_SLUG}`, permanent: false },
     ];
   },
   async headers() {
