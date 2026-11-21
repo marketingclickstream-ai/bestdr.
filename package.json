@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check:html": "tsx scripts/check-rendered.ts",
+    "check:copy": "node scripts/check-copy.mjs",
     "seed:sql": "tsx scripts/generate-seed.ts",
     "format": "prettier --write ."
   },
