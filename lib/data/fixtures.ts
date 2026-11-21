@@ -6,6 +6,7 @@ import { faqs } from "@/content/faqs";
 import { reviewers } from "@/content/reviewers";
 import { posts } from "@/content/blog";
 import { videos } from "@/content/videos";
+import { normalizeSite } from "./normalize";
 
 /** Built-in sample data. Used whenever the Supabase env vars are absent. */
-export const fixtures: SiteData = { treatments, cities, pages, costs, faqs, reviewers, posts, videos };
+export const fixtures: SiteData = normalizeSite({ treatments, cities, pages, costs, faqs, reviewers, posts, videos });
