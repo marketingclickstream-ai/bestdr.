@@ -7,7 +7,7 @@ import { INDEXING_ON, LINK_MODE } from "./env";
 import { costLines, faqsFor, findCity, findPage, findReviewer, findTreatment, getSite } from "./data";
 import { evaluatePublishGate, type GateReport } from "./publish-gate";
 import { cityTreatmentMeta } from "./seo";
-import { hasCostPage, includeKeysOf } from "./topic";
+import { hasCostPage, hasHub, includeKeysOf, isCostOnlyTopic } from "./topic";
 
 // ------------------------------------------------------------------ URL resolution
 // Routing rule C3: a root-level slug is a page only if it matches an allow-listed
@@ -20,14 +20,14 @@ export type Resolved =
 
 export function resolveSlug(site: SiteData, slug: string): Resolved | null {
   const treatment = findTreatment(site, slug);
-  if (treatment) return { kind: "treatment", treatment };
+  if (treatment && hasHub(treatment)) return { kind: "treatment", treatment };
   for (const city of site.cities) {
     const suffix = `-in-${city.slug}`;
     if (!slug.endsWith(suffix)) continue;
     const head = slug.slice(0, -suffix.length);
     if (head === "plastic-surgery") return { kind: "city-hub", city };
     const t = findTreatment(site, head);
-    const page = t && findPage(site, t.slug, city.slug);
+    const page = t && hasHub(t) && findPage(site, t.slug, city.slug);
     if (t && page) return { kind: "city-treatment", treatment: t, city, page };
   }
   return null;
@@ -35,7 +35,7 @@ export function resolveSlug(site: SiteData, slug: string): Resolved | null {
 
 export function allRootSlugs(site: SiteData): string[] {
   return [
-    ...site.treatments.map((t) => t.slug),
+    ...site.treatments.filter(hasHub).map((t) => t.slug),
     ...site.cities.map((c) => `plastic-surgery-in-${c.slug}`),
     ...site.pages.map((p) => `${p.treatmentSlug}-in-${p.citySlug}`),
   ];
@@ -150,10 +150,15 @@ export function buildRegistry(site: SiteData, now = new Date()): Registry {
   reg.set("/videos", site.videos.some((v) => !v.isSample));
   for (const t of site.treatments) {
     const reviewer = findReviewer(site, t.reviewerId);
-    const clean = t.published && !hasPlaceholderMarkers(collectStrings([t.content, t.summary]).join(" ")) && (!t.content || (Boolean(reviewer) && !reviewer!.isSample));
-    reg.set(`/${t.slug}`, clean);
+    // A cost-only topic has no hub and no content: its cost page is the whole page, so it needs a real reviewer once it has text.
+    const costOnly = isCostOnlyTopic(t);
+    const body = costOnly ? [t.costPage, t.summary] : [t.content, t.summary];
+    const reviewed = Boolean(reviewer) && !reviewer!.isSample;
+    const clean = t.published && !hasPlaceholderMarkers(collectStrings(body).join(" ")) && (costOnly ? Boolean(t.costPage) && reviewed : !t.content || reviewed);
+    // A cost-only topic has no hub page, so /<slug> is not in the registry (links to it are dropped, and the URL is a 404).
+    if (!costOnly) reg.set(`/${t.slug}`, clean);
     // A cost page needs a real (not sample) national range as well, so a sample price never reaches the sitemap.
-    if (hasCostPage(t)) reg.set(`/cost/${t.slug}`, clean && Boolean(t.content) && Boolean(t.nationalRange) && !t.nationalRange!.isSample);
+    if (hasCostPage(t)) reg.set(`/cost/${t.slug}`, clean && (costOnly || Boolean(t.content)) && Boolean(t.nationalRange) && !t.nationalRange!.isSample);
   }
   reg.set("/treatments", site.treatments.some((t) => t.category !== "surgery" && reg.get(`/${t.slug}`) === true && Boolean(t.content)));
   for (const p of site.posts) reg.set(`/learn/${p.slug}`, postLive(p));
