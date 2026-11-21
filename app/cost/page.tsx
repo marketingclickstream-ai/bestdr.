@@ -8,7 +8,7 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const live = buildRegistry(await getSite()).get("/cost") === true;
-  return buildMetadata({ title: "Surgery Cost Guides: What Changes the Price", description: "What changes the price of plastic surgery in India, what a written quote should list, and what is usually left out.", path: "/cost", index: live });
+  return buildMetadata({ title: "Cost Guides: What Changes the Price", description: "What changes the price of plastic surgery, skin, hair and injectable treatments in India, what a written quote should list, and what is usually left out.", path: "/cost", index: live });
 }
 
 export default async function Page() {
