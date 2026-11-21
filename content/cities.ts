@@ -7,7 +7,7 @@ export const cities: City[] = [
     altName: "Gurugram",
     state: "Haryana",
     areas: ["Delhi", "Noida", "Faridabad", "Rewari"],
-    summary: "Surgery in Gurgaon is done at partner hospitals and day-care centres. Most people come from Delhi, Noida, Faridabad or Rewari.",
+    summary: "Care in Gurgaon is given at partner hospitals, day-care centres and clinics. Most people come from Delhi, Noida, Faridabad or Rewari.",
     nearby: [{ citySlug: "delhi", lead: "Planning from South or East Delhi? Read", tail: "for local travel and price notes." }],
   },
   {
