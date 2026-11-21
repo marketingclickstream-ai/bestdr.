@@ -32,9 +32,10 @@ describe("routing (C3 allow-list)", () => {
     expect(resolveSlug(fixtures, "rhinoplasty-in-mars")).toBeNull();
     expect(resolveSlug(fixtures, "unknown-treatment-in-delhi")).toBeNull();
   });
-  it("has 6 treatments x 4 cities of city pages", () => {
-    expect(fixtures.pages).toHaveLength(24);
-    expect(allRootSlugs(fixtures).length).toBe(6 + 4 + 24);
+  it("has 11 treatments x 4 cities of city pages", () => {
+    expect(fixtures.treatments).toHaveLength(11);
+    expect(fixtures.pages).toHaveLength(44);
+    expect(allRootSlugs(fixtures).length).toBe(11 + 4 + 44);
   });
 });
 
