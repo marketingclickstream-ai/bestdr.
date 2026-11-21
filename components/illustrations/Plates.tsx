@@ -981,7 +981,7 @@ export function ReviewerPortrait() {
   return (
     <svg viewBox="0 0 120 120" role="img" aria-labelledby="t-pt">
       <title id="t-pt">
-        Portrait placeholder for the reviewing surgeon. No photo until written
+        Portrait placeholder for the reviewing doctor. No photo until written
         consent is given.
       </title>
       <rect
