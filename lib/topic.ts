@@ -1,5 +1,6 @@
 import type { CareKind, CostUnit, Treatment, TopicCategory } from "@/content/types";
 import { INCLUDE_KEYS, NON_SURGICAL_INCLUDE_DEFS, type IncludeKeyDef } from "@/content/types";
+import { isCostOnly, isPlasticPillar } from "@/content/slugs";
 
 // Helpers that answer "what kind of topic is this?" in one place, so templates never test slugs.
 
@@ -30,9 +31,17 @@ export function priceLabelOf(t: Pick<Treatment, "category" | "careKind" | "displ
 /** The person who examines and decides, in the words used on the page. */
 export const professionalOf = (t: Pick<Treatment, "category" | "careKind">): string => (isNonSurgical(t) ? "doctor" : "surgeon");
 
-/** A cost page exists for every topic with a national range, and for every non-surgery topic (the range slot may be pending). */
-export function hasCostPage(t: Pick<Treatment, "category" | "nationalRange">): boolean {
-  return Boolean(t.nationalRange) || t.category !== "surgery";
+/** A cost-only topic (arm lift, thigh lift, ...): a national cost page and nothing else. No hub, no city pages. */
+export const isCostOnlyTopic = (t: Pick<Treatment, "slug">): boolean => isCostOnly(t.slug);
+/** True when the topic has a hub page at /<slug>. Cost-only topics do not. */
+export const hasHub = (t: Pick<Treatment, "slug">): boolean => !isCostOnly(t.slug);
+
+/**
+ * A cost page exists for every topic with a national range, every non-surgery topic (the range slot may be pending),
+ * and every plastic surgery pillar and cost-only topic (the range slot is pending until real quotes exist).
+ */
+export function hasCostPage(t: Pick<Treatment, "slug" | "category" | "nationalRange">): boolean {
+  return Boolean(t.nationalRange) || t.category !== "surgery" || isPlasticPillar(t.slug) || isCostOnly(t.slug);
 }
 
 export interface CategoryInfo { id: TopicCategory; label: string; menuLabel: string; blurb: string }
