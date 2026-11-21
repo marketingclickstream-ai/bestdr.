@@ -21,8 +21,8 @@ const LIPO_PRICE: PriceMeta = {
   basis: "Working range for one area, such as the abdomen or the arms, from one source dated 10 Nov 2026. Two areas, ultrasound-assisted work, full-body plans and the chin cost differently, so see the table. The same figures are shown for every city until local quotes are collected.",
 };
 
-const gynIncludes: Record<IncludeKey, IncludeState> = { surgeon: "included", anaesthesia: "included", theatre: "included", stay: "varies", consumables: "unknown", followups: "unknown", medicines: "unknown" };
-const lipoIncludes: Record<IncludeKey, IncludeState> = { surgeon: "unknown", anaesthesia: "unknown", theatre: "unknown", stay: "varies", consumables: "unknown", followups: "unknown", medicines: "unknown" };
+const gynIncludes: Partial<Record<IncludeKey, IncludeState>> = { surgeon: "included", anaesthesia: "included", theatre: "included", stay: "varies", consumables: "unknown", followups: "unknown", medicines: "unknown" };
+const lipoIncludes: Partial<Record<IncludeKey, IncludeState>> = { surgeon: "unknown", anaesthesia: "unknown", theatre: "unknown", stay: "varies", consumables: "unknown", followups: "unknown", medicines: "unknown" };
 
 const base = (treatmentSlug: string, citySlug: string) => ({
   treatmentSlug, citySlug, isPlaceholder: false, published: false, reviewerId: "sample-reviewer",
@@ -57,7 +57,7 @@ export const gynecomastiaDelhi: CityTreatmentPage = {
     checks: gynChecks,
   },
   travel: {
-    intro: "In Delhi the hard part is not distance but traffic. Plan the consultation day and the operation day for off-peak hours, and bring an attendant who can drive you home.",
+    intro: "In Delhi, traffic is the main difficulty. Plan the consultation day and the operation day for off-peak hours, and bring an attendant who can drive you home.",
     airport: "Indira Gandhi International Airport (to be verified)",
     station: "New Delhi, Old Delhi and Hazrat Nizamuddin stations (to be verified against the facility)",
     stayDays: "Day care for most; one night if the surgeon asks",
