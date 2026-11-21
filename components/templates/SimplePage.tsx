@@ -1,3 +1,4 @@
+import type { CareKind } from "@/content/types";
 import type { Crumb } from "@/lib/schema";
 import { breadcrumbList, graph, organization } from "@/lib/schema";
 import { Breadcrumbs } from "../layout/Breadcrumbs";
@@ -10,7 +11,7 @@ import { SectionHead } from "../ui/SectionHead";
 export interface SimpleSection { heading: string; paragraphs?: string[]; list?: string[] }
 
 /** Narrow single-column page for trust, policy and legal text, and for index pages with a short intro. */
-export function SimplePage({ crumbs, h1, lead, sections, extra, jsonLd, waMessage = "I have a question about plastic surgery", treatment = "", city = "other" }: {
+export function SimplePage({ crumbs, h1, lead, sections, extra, jsonLd, waMessage = "I have a question about plastic surgery", treatment = "", city = "other", kind = "surgical" }: {
   crumbs: Crumb[];
   h1: string;
   lead: string;
@@ -20,6 +21,7 @@ export function SimplePage({ crumbs, h1, lead, sections, extra, jsonLd, waMessag
   waMessage?: string;
   treatment?: string;
   city?: string;
+  kind?: CareKind;
 }) {
   return (
     <PageFrame jsonLd={jsonLd ?? graph(organization(), breadcrumbList(crumbs))} treatment={treatment} city={city}>
@@ -40,7 +42,7 @@ export function SimplePage({ crumbs, h1, lead, sections, extra, jsonLd, waMessag
         ))}
         {extra}
         <WhatsAppBand message={waMessage} />
-        <DisclaimerSection />
+        <DisclaimerSection kind={kind} />
       </div>
     </PageFrame>
   );
