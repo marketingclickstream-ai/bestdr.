@@ -1,4 +1,5 @@
 import type { CareKind, Reviewer, TreatmentContent } from "@/content/types";
+import { reviewerLine as reviewerLineOf } from "@/lib/reviewers";
 import { longDate } from "@/lib/format";
 import { ReviewerPortrait } from "../illustrations/Plates";
 import { FootRef } from "../ui/FootRef";
@@ -88,6 +89,7 @@ export function TalkSection({ waMessage }: { waMessage: string }) {
 }
 
 export function ReviewerSection({ reviewer, content }: { reviewer: Reviewer | null; content: TreatmentContent }) {
+  const rl = reviewerLineOf(reviewer);
   return (
     <section className="sec" id="reviewer">
       <SectionHead>Reviewer and sources</SectionHead>
@@ -97,8 +99,8 @@ export function ReviewerSection({ reviewer, content }: { reviewer: Reviewer | nu
           <figcaption className="fcap" style={{ fontSize: "0.8125rem" }}>Photo needs consent</figcaption>
         </figure>
         <dl>
-          <div><dt>Reviewed by</dt><dd>{reviewer ? <>{reviewer.name}, {reviewer.credential} {reviewer.isSample && <SampleChip />}</> : <>Pending. No reviewer is named yet.</>}</dd></div>
-          <div><dt>Date reviewed</dt><dd>{reviewer ? <>{longDate(reviewer.reviewedOn)} {reviewer.isSample && <SampleChip />}</> : "Not reviewed yet"}</dd></div>
+          <div><dt>Reviewed by</dt><dd>{rl.named ? <>{rl.name}, {rl.credential}</> : <>Pending. {rl.pending.replace("Medical review is pending. ", "")}</>}</dd></div>
+          <div><dt>Date reviewed</dt><dd>{rl.named ? longDate(rl.reviewedOn) : "Not reviewed yet"}</dd></div>
           <div><dt>Method</dt><dd>Sources read, wording checked against them, timings and ranges checked with partner quotes before any figure is published.</dd></div>
         </dl>
       </div>
