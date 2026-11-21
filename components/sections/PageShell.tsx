@@ -4,7 +4,7 @@ import { WhatsAppButton } from "../ui/WhatsAppButton";
 import { TocList } from "./TocList";
 import styles from "./PageShell.module.css";
 
-export interface RailChip { label: string; value: string; chip: string | null }
+export interface RailChip { label: string; value: string; chip: string | null; pending?: boolean }
 
 /** Two-column frame: sticky rail (contents, price chip, contact buttons) and the content column. */
 export function PageShell({ toc, chip, waMessage, children }: { toc: { id: string; label: string }[]; chip?: RailChip | null; waMessage: string; children: React.ReactNode }) {
@@ -16,7 +16,7 @@ export function PageShell({ toc, chip, waMessage, children }: { toc: { id: strin
         {chip && (
           <div className={styles.chip}>
             <small>{chip.label}</small>
-            <strong>Rs {chip.value}</strong>
+            <strong>{chip.pending ? chip.value : `Rs ${chip.value}`}</strong>
             {chip.chip && <SampleChip label={chip.chip} />}
           </div>
         )}
