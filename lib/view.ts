@@ -2,6 +2,7 @@ import type { BlogPost, City, SiteData, Treatment, VideoItem } from "@/content/t
 import { inrRange } from "./format";
 import { findPage, findPost, findTreatment, findVideo } from "./data";
 import { isLinkVisible } from "./pages";
+import { costUnitOf } from "./topic";
 
 /** Sentences for the "Nearby cities" block: only cities whose page for this treatment is live. */
 export function nearbyLines(site: SiteData, t: Treatment, c: City): { line: string; href: string; cityName: string; lead: string }[] {
@@ -32,11 +33,13 @@ export function relatedCards(site: SiteData, t: Treatment, c: City | null) {
   return list.map((rt) => {
     const page = c ? findPage(site, rt.slug, c.slug) : undefined;
     const price = page?.price;
+    const unit = costUnitOf(rt);
+    const suffix = unit === "total" ? "" : ` ${unit === "session" ? "per session" : unit === "course" ? "per course" : unit === "graft" ? "per graft" : "per area"}`;
     return price
-      ? { treatment: rt, rangeLabel: `${c!.name} range`, range: `Rs ${inrRange(price.minInr, price.maxInr)}` }
+      ? { treatment: rt, rangeLabel: `${c!.name} range${suffix}`, range: `Rs ${inrRange(price.minInr, price.maxInr)}` }
       : rt.nationalRange
-        ? { treatment: rt, rangeLabel: "Typical range", range: `Rs ${inrRange(rt.nationalRange.minInr, rt.nationalRange.maxInr)}` }
-        : { treatment: rt, rangeLabel: "Typical range", range: "To be confirmed" };
+        ? { treatment: rt, rangeLabel: `Typical range${suffix}`, range: `Rs ${inrRange(rt.nationalRange.minInr, rt.nationalRange.maxInr)}` }
+        : { treatment: rt, rangeLabel: `Typical range${suffix}`, range: "To be confirmed" };
   });
 }
 
@@ -56,8 +59,17 @@ const NEXT_STEPS: Record<string, string[]> = {
   "types-of-liposuction": ["lucknow", "kanpur"],
 };
 
+const CITY_PAIRS = [["delhi", "gurgaon"], ["lucknow", "kanpur"]] as const;
+
+/** An explicit post.nextCities wins, then the table above. Posts on a topic with city pages rotate between two pairs by slug, so one city does not get every link. */
 export function nextCitiesFor(post: BlogPost): string[] {
-  return post.nextCities ?? NEXT_STEPS[post.slug] ?? [];
+  if (post.nextCities) return post.nextCities;
+  const known = NEXT_STEPS[post.slug];
+  if (known) return known;
+  if (!post.treatmentSlug) return [];
+  let h = 0;
+  for (const ch of post.slug) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return [...CITY_PAIRS[h % CITY_PAIRS.length]!];
 }
 
 /** Two sibling guides on the same topic, the ones after this post in the list (wrapping around). */
