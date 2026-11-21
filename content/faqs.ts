@@ -1,5 +1,6 @@
 import type { FaqRow } from "./types";
 import { cityFaqs, liposuctionFaqs } from "./faqs-more";
+import { skinHairTreatments } from "./skin-hair";
 
 const T = "gynecomastia-surgery";
 
@@ -22,4 +23,4 @@ const gynecomastiaFaqs: FaqRow[] = [
   { id: "faq-second", treatmentSlug: T, citySlug: null, order: 14, question: "What if I need a second operation?", answer: "It happens. Ask the hospital, in writing, whether a second operation is charged and for how long after the first. You can [compare two quotes](/learn/how-to-compare-surgery-quotes) on exactly this line." },
 ];
 
-export const faqs: FaqRow[] = [...gynecomastiaFaqs, ...liposuctionFaqs, ...cityFaqs];
+export const faqs: FaqRow[] = [...gynecomastiaFaqs, ...liposuctionFaqs, ...cityFaqs, ...skinHairTreatments.flatMap((t) => t.faqs)];
