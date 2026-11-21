@@ -7,6 +7,7 @@ import { INDEXING_ON, LINK_MODE } from "./env";
 import { costLines, faqsFor, findCity, findPage, findReviewer, findTreatment, getSite } from "./data";
 import { evaluatePublishGate, type GateReport } from "./publish-gate";
 import { cityTreatmentMeta } from "./seo";
+import { hasCostPage, includeKeysOf } from "./topic";
 
 // ------------------------------------------------------------------ URL resolution
 // Routing rule C3: a root-level slug is a page only if it matches an allow-listed
@@ -66,7 +67,7 @@ export function cityFaqRows(site: SiteData, t: Treatment, c: City): { all: FaqRo
 function uniqueTextOf(site: SiteData, p: CityTreatmentPage): string {
   const city = findCity(site, p.citySlug);
   const t = findTreatment(site, p.treatmentSlug);
-  const own = [...p.localCopy, p.localNotes, p.travel, p.facilities, p.localContext, city && t ? faqsFor(site, p.treatmentSlug, p.citySlug).filter((f) => f.citySlug === p.citySlug) : []];
+  const own = [...p.localCopy, p.intro, p.sections, p.localNotes, p.travel, p.facilities, p.localContext, city && t ? faqsFor(site, p.treatmentSlug, p.citySlug).filter((f) => f.citySlug === p.citySlug) : []];
   return plain(collectStrings(own).join(" "));
 }
 
@@ -110,6 +111,7 @@ export function cityPageStatus(site: SiteData, t: Treatment, c: City, p: CityTre
     {
       page: p, treatmentName: t.name, cityName: c.name, title, description, reviewer, cityFaqs: city,
       faqText: plain(all.map((f) => f.question + " " + f.answer).join(" ")), uniqueText: uniqueTextOf(site, p), pageText,
+      includeKeys: includeKeysOf(t),
       hasDisclaimer: Boolean(DISCLAIMER), hasConsentText: Boolean(CONSENT_TEXT), jsonLdValid: true,
       showsPlaceholders: hasPlaceholderMarkers(collectStrings([t.content, t.summary, p, all.map((f) => [f.question, f.answer]), costLines(site, t.slug, c.slug)]).join(" ")) || Boolean(p.price?.isSample) || Boolean(reviewer?.isSample),
     },
@@ -140,17 +142,20 @@ export function buildRegistry(site: SiteData, now = new Date()): Registry {
   const reg: Registry = new Map();
   reg.set("/", true);
   for (const s of staticPages) reg.set(`/${s.slug}`, s.published);
-  reg.set("/plastic-surgery", site.treatments.some((t) => t.published));
-  reg.set("/cost", site.treatments.some((t) => t.published && t.nationalRange));
+  reg.set("/plastic-surgery", site.treatments.some((t) => t.published && t.category === "surgery"));
+  reg.set("/cost", site.treatments.some((t) => t.published && hasCostPage(t) && t.nationalRange));
   // A guide is live only when published AND reviewed by a real (non-sample) reviewer.
   const postLive = (p: SiteData["posts"][number]) => p.published && Boolean(findReviewer(site, p.reviewerId)) && !findReviewer(site, p.reviewerId)!.isSample;
   reg.set("/learn", site.posts.some(postLive));
   reg.set("/videos", site.videos.some((v) => !v.isSample));
   for (const t of site.treatments) {
-    const clean = t.published && !hasPlaceholderMarkers(collectStrings([t.content, t.summary]).join(" "));
+    const reviewer = findReviewer(site, t.reviewerId);
+    const clean = t.published && !hasPlaceholderMarkers(collectStrings([t.content, t.summary]).join(" ")) && (!t.content || (Boolean(reviewer) && !reviewer!.isSample));
     reg.set(`/${t.slug}`, clean);
-    if (t.nationalRange) reg.set(`/cost/${t.slug}`, clean && Boolean(t.content));
+    // A cost page needs a real (not sample) national range as well, so a sample price never reaches the sitemap.
+    if (hasCostPage(t)) reg.set(`/cost/${t.slug}`, clean && Boolean(t.content) && Boolean(t.nationalRange) && !t.nationalRange!.isSample);
   }
+  reg.set("/treatments", site.treatments.some((t) => t.category !== "surgery" && reg.get(`/${t.slug}`) === true && Boolean(t.content)));
   for (const p of site.posts) reg.set(`/learn/${p.slug}`, postLive(p));
   for (const c of site.cities) {
     let any = false;
