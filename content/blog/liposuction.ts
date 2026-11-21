@@ -36,7 +36,7 @@ Fat cells in the treated area are removed through thin tubes passed under the sk
 ## What it does not do
 - It does not remove fat inside the abdomen around the organs, which is called visceral fat.
 - It does not tighten loose skin on its own.
-- It does not cure high blood sugar, blood pressure or cholesterol.
+- It does not treat high blood sugar, blood pressure or cholesterol.
 - It does not stop fat from being stored elsewhere if you gain weight.
 Doctors treat obesity with lifestyle changes, medicines and, in some cases, other kinds of surgery. Liposuction is not one of them.
 ## Where it fits
@@ -323,7 +323,7 @@ Liposuction under the chin is a smaller procedure, often done with local anaesth
 - Garments, medicines and follow-ups.
 Our [[link: /cost/liposuction | cost page]] has sample ranges, marked as such, and a list of what to get in writing.
 ## How areas are chosen
-The surgeon looks at where fat sits, how your skin is, your proportions and your goals. They may recommend treating fewer areas, or treating areas in stages. A good plan is about balance, not just removing from the area you point at.
+The surgeon looks at where fat sits, how your skin is, your proportions and your goals. They may recommend treating fewer areas, or treating areas in stages. A good plan looks at balance across the body as well as the area you point at.
 ## Who should wait
 People whose weight is changing, those who expect liposuction to tighten loose skin, and anyone with health conditions not yet under control. Wait too if you have a large number of areas in mind and your surgeon has not discussed the limits.
 ## When to see a doctor
@@ -337,7 +337,7 @@ Look at [[link: /learn/types-of-liposuction | the types of liposuction]] to foll
 ## Combining areas
 Surgeons sometimes treat the abdomen, flanks and back in one session to keep proportions even. The more areas, the longer the operation and the larger the volume of fluid and fat involved, which affects risk and recovery. Many surgeons set a limit per session and may suggest staging.
 ## Areas that are harder
-Inner thighs, upper arms and the lower belly after pregnancy can be harder because of skin and fibrous fat. That does not mean they cannot be treated. It means the surgeon will talk more about skin, and about a plan B if the skin does not tighten. Ask what that plan B would be and what it adds to the quote.
+Inner thighs, upper arms and the lower belly after pregnancy can be harder because of skin and fibrous fat. These areas can still be treated. The surgeon will talk more about skin, and about a plan B if the skin does not tighten. Ask what that plan B would be and what it adds to the quote.
 [[faq: Which areas can be treated? | Abdomen, flanks, thighs, hips, buttocks, back, upper arms, chest, and chin and neck, among others. The surgeon decides which suit you.]]
 [[faq: Can stomach fat be removed? | Fat under the skin of the belly can be treated. Fat around the organs cannot, and loose skin needs a different approach.]]
 If you would like to map out which areas fit your goals, message us on WhatsApp, or put your quote through the quote checker. No pressure at all.
@@ -421,7 +421,7 @@ Liposuction takes out a share of fat cells in the treated area. With fewer cells
 ## What happens if you gain weight
 Weight gain after surgery tends to show up in a different pattern. Some people notice fat in the treated area, but often it appears more in places that were not treated, such as the upper abdomen, back or arms. The proportions can change, and not in the way you planned. Scars and swelling do not control this; your habits do.
 ## The visceral fat point
-Fat around the organs inside the abdomen is not removed by liposuction. If you gain weight, some goes there, and it matters for health. This is why surgeons discuss lifestyle and not just shape. See also [[link: /learn/liposuction-vs-weight-loss | liposuction is not weight loss]].
+Fat around the organs inside the abdomen is not removed by liposuction. If you gain weight, some goes there, and it matters for health. This is why surgeons discuss lifestyle as well as shape. See also [[link: /learn/liposuction-vs-weight-loss | liposuction is not weight loss]].
 ## What helps keep the result
 - Reach a steady weight before surgery, and stay near it.
 - Keep a routine of regular movement you enjoy.
@@ -452,7 +452,7 @@ The price of a touch-up varies; see the factors on our [[link: /cost/liposuction
 Fat patterns shift over a lifetime. Pregnancy, menopause, long-term stress, sleep loss and some medicines can all change where the body stores fat. None of these means the operation failed. They are reasons to expect that the body will keep changing, and to treat any result as a snapshot that needs maintenance.
 ## A sensible check-in
 Many people find it useful to weigh themselves once a week and measure the treated area once a month for the first year. If weight creeps up by a few kilos, adjust early. Waiting until clothes feel tight makes it harder to correct.
-[[faq: Does fat come back after liposuction? | The removed cells do not return, but remaining fat cells can enlarge with weight gain, in treated and untreated areas.]]
+[[faq: Does fat come back after liposuction? | The removed cells do not return. Remaining fat cells can enlarge with weight gain, in treated and untreated areas.]]
 [[faq: Will I regain weight? | Not because of the operation. Weight depends on what you eat and how active you are. Large gains can change your shape.]]
 If you want to talk about what keeps results steady, message us on WhatsApp. Or compare a quote in the quote checker. We will not rush you.
 [[sources: NHS patient information on liposuction; Mayo Clinic patient information on liposuction.]]
@@ -609,7 +609,7 @@ See a doctor for a lump that is new, painful or growing, since not every fullnes
 ## Fair question to ask any clinic
 "If I came to you for a second opinion with a quote from another clinic, how would you read it?" Good clinics will answer honestly.
 ## A note on marketing language
-Phrases like "no downtime", "melts fat" or "tightens skin" are advertising words, not medical measurements. Ask what the clinic means in days, weeks or centimetres, and how they measure it. If the answer is a photo, ask whether the lighting, posture and time between pictures were the same. A fair clinic will explain, and will tell you if your body is not a good match for the method.
+Phrases like "no downtime", "melts fat" or "tightens skin" are advertising words with no medical measurement behind them. Ask what the clinic means in days, weeks or centimetres, and how they measure it. If the answer is a photo, ask whether the lighting, posture and time between pictures were the same. A fair clinic will explain, and will tell you if your body is not a good match for the method.
 [[faq: Is fat freezing better than liposuction? | They work differently. Fat freezing is non-surgical and usually changes less per session. Liposuction removes more in one operation but involves surgery. The right choice depends on your body and goals.]]
 If you would like help weighing two quotes, message us on WhatsApp or use the quote checker. It is your decision.
 [[sources: NHS patient information on cosmetic procedures; Mayo Clinic patient information on liposuction. No comparative data is cited here.]]
@@ -624,12 +624,12 @@ If you would like help weighing two quotes, message us on WhatsApp or use the qu
     thumb: 3,
     body: lines(`
 [[reviewer]]
-Liposuction is not only for women. Men commonly have it for the chest, abdomen and flanks. Fat in these areas can persist despite diet and training. If a firm gland sits behind the nipple, it is gynecomastia and may need gland removal as well. A doctor tells which you have. See our [[link: /liposuction | liposuction page]].
+Men commonly have liposuction too, usually for the chest, abdomen and flanks. Fat in these areas can persist despite diet and training. If a firm gland sits behind the nipple, it is gynecomastia and may need gland removal as well. A doctor tells which you have. See our [[link: /liposuction | liposuction page]].
 ## Where men store fat
 Men tend to carry fat around the abdomen, the sides of the waist and the chest. Some of it is visceral fat inside the abdomen, which liposuction cannot reach. The soft layer under the skin is what the operation treats.
 ## Chest fat
 A soft, wide fullness of the chest can be fat alone, called [[link: /learn/pseudogynecomastia | pseudogynecomastia]]. Liposuction through small cuts at the side of the chest is a common plan. The surgeon may use an energy-based tool for firmer fat in men; see [[link: /learn/types-of-liposuction | the types]].
-## When it is gynecomastia and not only fat
+## When it is gynecomastia as well as fat
 If there is a firm, rubbery disc behind the nipple, or tenderness, the tissue is gland. Liposuction alone may leave part of it behind. The plan then often combines liposuction with gland removal. Read [[link: /learn/gynecomastia-liposuction-vs-gland-removal | how that plan is chosen]] and our [[link: /gynecomastia-surgery | gynecomastia surgery page]].
 Can liposuction fix "man boobs"? Only if they are fat. Many men have a mix, so a clinical exam matters. See [[link: /learn/gynecomastia-fat-or-gland | fat or gland]].
 ## Abdomen and flanks
