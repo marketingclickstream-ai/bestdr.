@@ -1,4 +1,4 @@
-import type { City, CityTreatmentPage, ImageSlotData } from "@/content/types";
+import type { CareKind, City, CityTreatmentPage, ImageSlotData } from "@/content/types";
 import { MapPlate } from "../illustrations/Plates";
 import { Plate } from "../ui/Plate";
 import { ResponsiveDetails } from "../ui/ResponsiveDetails";
@@ -6,17 +6,18 @@ import { Rich } from "../ui/Rich";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
 
-export function FacilitiesSection({ city, page }: { city: City; page: CityTreatmentPage }) {
+export function FacilitiesSection({ city, page, kind = "surgical" }: { city: City; page: CityTreatmentPage; kind?: CareKind }) {
   const f = page.facilities;
   if (!f) return null;
+  const non = kind === "non-surgical";
   return (
     <section className="sec" id="facilities">
-      <SectionHead>Hospitals and day-care centres in {city.name}</SectionHead>
+      <SectionHead>{non ? `Clinics and hospitals in ${city.name}` : `Hospitals and day-care centres in ${city.name}`}</SectionHead>
       <p className="lead">{f.intro}</p>
       <div className="full">
-        <ResponsiveDetails summary="What to check in any facility" className="more dd full">
+        <ResponsiveDetails summary={non ? "What to check in any clinic" : "What to check in any facility"} className="more dd full">
           <table className="gt">
-            <caption>What to check in any facility</caption>
+            <caption>{non ? "What to check in any clinic" : "What to check in any facility"}</caption>
             <thead><tr><th scope="col">Check</th><th scope="col">Why it matters</th><th scope="col">Ask like this</th></tr></thead>
             <tbody>
               {f.checks.map((c) => (
@@ -31,7 +32,7 @@ export function FacilitiesSection({ city, page }: { city: City; page: CityTreatm
   );
 }
 
-export function GettingThereSection({ city, page, nearbyLine, slot }: { city: City; page: CityTreatmentPage; nearbyLine: string | null; slot?: ImageSlotData }) {
+export function GettingThereSection({ city, page, nearbyLine, slot, kind = "surgical" }: { city: City; page: CityTreatmentPage; nearbyLine: string | null; slot?: ImageSlotData; kind?: CareKind }) {
   const t = page.travel;
   if (!t) return null;
   return (
@@ -41,7 +42,7 @@ export function GettingThereSection({ city, page, nearbyLine, slot }: { city: Ci
         <div>
           <p className="lead">{t.intro}</p>
           <p>
-            <Rich text={`For other operations here, see [plastic surgery in ${city.name}](/plastic-surgery-in-${city.slug}).`} />
+            <Rich text={kind === "non-surgical" ? `For other treatments here, see [treatments in ${city.name}](/plastic-surgery-in-${city.slug}).` : `For other operations here, see [plastic surgery in ${city.name}](/plastic-surgery-in-${city.slug}).`} />
             {nearbyLine && <> <Rich text={nearbyLine} /></>}
           </p>
           <p><Rich text={t.metro} /></p>
@@ -77,5 +78,20 @@ export function LocalNotesSection({ city, page }: { city: City; page: CityTreatm
         {notes.map((n) => <div key={n.heading}><dt>{n.heading}</dt><dd><Rich text={n.text} /></dd></div>)}
       </dl>
     </section>
+  );
+}
+
+/** City-only sections written for this page (CityTreatmentPage.sections). */
+export function CitySections({ page }: { page: CityTreatmentPage }) {
+  if (!page.sections || page.sections.length === 0) return null;
+  return (
+    <>
+      {page.sections.map((x) => (
+        <section className="sec" key={x.heading} id={`city-${x.heading.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}>
+          <SectionHead>{x.heading}</SectionHead>
+          {x.paragraphs.map((para) => <p key={para}><Rich text={para} /></p>)}
+        </section>
+      ))}
+    </>
   );
 }
