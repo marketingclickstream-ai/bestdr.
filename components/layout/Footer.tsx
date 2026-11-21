@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { DISCLAIMER, NAME_LINE, TAGLINE, type NavLink } from "@/content/site";
+import { DISCLAIMER_GENERAL, NAME_LINE, TAGLINE, type NavLink } from "@/content/site";
 import { ResponsiveDetails } from "../ui/ResponsiveDetails";
 import { SampleChip } from "../ui/SampleChip";
 import { CookieNote } from "./CookieNote";
@@ -26,7 +26,7 @@ export function Footer({ groups }: { groups: { label: string; links: NavLink[] }
             </ResponsiveDetails>
           ))}
         </div>
-        <p>{DISCLAIMER} In an emergency call 112.</p>
+        <p>{DISCLAIMER_GENERAL} In an emergency call 112.</p>
         <p>{NAME_LINE}</p>
         <p>Grievance contact: [officer name and email] <SampleChip label="To be confirmed" />. Company registration: [number] <SampleChip label="To be confirmed" /></p>
         <p>Copyright 2026 Bestdoctorsin.</p>
