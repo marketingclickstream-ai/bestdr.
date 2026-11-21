@@ -74,6 +74,8 @@ export interface SectionLabels {
 
 /** Per-treatment wording and picture choices, so one template serves every treatment. Defaults match gynecomastia. */
 export interface TreatmentDisplay {
+  /** True: a plastic surgery page without the drawn plates made for gynecomastia and liposuction (chest section, compression garment, body areas, cost checker band). The six new pillars set it in the registry. */
+  noPlates?: boolean;
   /** What one range in the cost table covers. Default "total" for surgical topics and "session" for non-surgical ones. */
   costUnit?: CostUnit;
   /** Link for "compare two quotes". Default: the surgery guide for surgical topics, no link for non-surgical ones. */
@@ -107,13 +109,23 @@ export interface TreatmentDisplay {
   tocLabels?: { surgery?: string; choices?: string };
 }
 
+/**
+ * Which kind of reviewer a page needs. Unassigned placeholder slots exist for plastic-surgery, dermatology and hair
+ * (content/reviewers.ts). "general" is the legacy "sample-reviewer" record.
+ */
+export type ReviewerSpecialty = "plastic-surgery" | "dermatology" | "hair" | "general";
+
 export interface Reviewer {
   id: string;
   name: string;
+  /** Empty for an unassigned placeholder. The site never prints a credential for a record with isSample = true. */
   credential: string;
   reviewedOn: string; // ISO date
+  /** True for an unassigned placeholder slot: no person is named, no credential and no review date are shown. */
   isSample: boolean;
   photoConsent: boolean;
+  /** Derived from the id when it is not stored (lib/reviewers.ts). */
+  specialty?: ReviewerSpecialty;
 }
 
 export interface City {
@@ -357,6 +369,8 @@ export interface NationalCostPage {
   rangeHeading: string;
   rangeCaption: string;
   planner?: { heading: string; formula: string; steps: string[] };
+  /** Topic-specific blocks (decision tables, staging, scar types), rendered after the planner and before the factor table. Same shape as TreatmentContent.extraSections. */
+  extraSections?: ExtraSection[];
   factors: { factor: string; why: string }[];
   notIncluded: string[];
   compareQuotes: string[];
@@ -445,4 +459,59 @@ export interface SiteData {
   reviewers: Reviewer[];
   posts: BlogPost[];
   videos: VideoItem[];
+}
+
+// ------------------------------------------------------------------ plastic surgery expansion (release 4)
+/**
+ * Two kinds of plastic surgery topic. Both are ordinary `Treatment` records in category "surgery"; the slug lists in
+ * content/slugs.ts decide which kind a slug is (PLASTIC_PILLAR_SLUGS, PLASTIC_COST_ONLY_SLUGS).
+ *
+ *  "pillar"    tummy-tuck, rhinoplasty, breast-augmentation, breast-reduction, blepharoplasty, otoplasty.
+ *              The same shape as gynecomastia and liposuction: a hub at /<slug> (full TreatmentContent), a national cost page at
+ *              /cost/<slug>, and city pages ONLY for the pairs in PLASTIC_CITY_PAGE_SLUGS (content/slugs.ts). Any other
+ *              /<slug>-in-<city> is a 404, whatever data a database holds.
+ *  "cost-only" arm-lift, thigh-lift, neck-lift, brow-lift, body-lift, scar-revision.
+ *              A national cost page at /cost/<slug> and nothing else: NO hub at /<slug> (404), NO city pages, no entry in
+ *              /plastic-surgery, /treatments or the menu except under Cost. Set `content: null`; the page is built from
+ *              `costPage` (NationalCostPage), `costLines` (national, citySlug null) and `faqs`. `cityPages` must be [].
+ *              Never write `[link](/arm-lift)` to a cost-only topic: link `/cost/arm-lift`. (A link to a missing page is
+ *              dropped from the HTML at render time, but it is still a wasted link.)
+ *
+ * The registry (content/treatments.ts) owns slug, category, name, menuName, alternateName, summary, procedure, icon, related,
+ * cardBlurb and a short costFactors list for all twelve, and a reviewerId that points at the plastic surgeon slot. Dev B's
+ * `treatment` object is merged over it by slug, exactly like SkinHairTopic. A topic that is not in `plasticTreatments` still
+ * renders as a short "being prepared" page (pillar) or a short cost page (cost-only) and stays noindex.
+ *
+ * Gating (unchanged strictness): every new page is noindex and out of the sitemap while ANY of these holds: the national
+ * range is sample or missing, the city price is sample or null, no partner facility is confirmed, or the reviewer is an
+ * unassigned slot. Never put a number in nationalRange or a CityTreatmentPage.price unless it is a real dated quote.
+ * Costs lines with minInr/maxInr null show the "To be confirmed" chip.
+ *
+ * Dev B: `content/plastic/index.ts` exports `plasticTreatments: PlasticTopic[]` (up to twelve entries, one per slug).
+ * Dev C: posts keep `treatmentSlug` = the pillar slug (or null for site-wide posts). reviewerId may be
+ * "reviewer-plastic-surgeon" or the legacy "sample-reviewer"; both resolve to an unassigned placeholder and show
+ * "Medical review is pending". Never write a credential in a post body.
+ */
+export type PlasticTopicKind = "pillar" | "cost-only";
+
+export interface PlasticTopic {
+  /** Must match the slug list: pillar for PLASTIC_PILLAR_SLUGS, cost-only for PLASTIC_COST_ONLY_SLUGS (a test checks it). */
+  kind: PlasticTopicKind;
+  /** Merged over the registry entry by slug. Pillars set content (full TreatmentContent), display, costFactors, readSlugs, seo, images, costPage. Cost-only topics set costPage and costFactors, and content stays null. */
+  treatment: Partial<Omit<Treatment, "slug">> & { slug: string };
+  costUnit?: CostUnit;
+  includeKeys?: IncludeKeyDef[];
+  costPage?: NationalCostPage;
+  /**
+   * National rows (citySlug null) and, for pillars, city rows for the approved city pages. position must be unique per
+   * (treatment, city). null min and max show the "To be confirmed" chip. Cost-only: national rows only.
+   */
+  costLines: CostLine[];
+  /**
+   * Pillar: written pages for the pairs in PLASTIC_CITY_PAGE_SLUGS only (an entry for any other city is ignored and a test
+   * fails). A listed pair with no entry becomes a placeholder page. Cost-only: [].
+   */
+  cityPages: CityTreatmentPage[];
+  /** Treatment-level rows (citySlug null) and city rows. Ids unique across the site, e.g. "tummy-tuck-what". Cost-only: national rows, shown on the cost page when costPage.faqs is empty. */
+  faqs: FaqRow[];
 }
