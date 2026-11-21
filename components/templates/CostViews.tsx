@@ -8,6 +8,7 @@ import { ExtrasLedger, QuoteChecker } from "../sections/Cost";
 import { Rich } from "../ui/Rich";
 import { CostTable } from "../sections/Cost";
 import { costLines } from "@/lib/data";
+import { ExtraSections } from "../sections/Extra";
 import { FaqSection } from "../sections/Faq";
 import { faqsFor } from "@/lib/data";
 import { faqPage } from "@/lib/schema";
@@ -111,6 +112,7 @@ export function NationalCostView({ site, t }: { site: SiteData; t: Treatment }) 
               </ol>
             </section>
           )}
+          <ExtraSections sections={cp?.extraSections} />
           <section className="sec" id="factors">
             <SectionHead>What changes the price</SectionHead>
             <table className="gt">
