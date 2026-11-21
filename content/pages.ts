@@ -1,9 +1,10 @@
 import type { CityTreatmentPage, CostLine, IncludeKey, IncludeState } from "./types";
 import { cities } from "./cities";
 import { treatments } from "./treatments";
+import { skinHairTreatments } from "./skin-hair";
 import { gynecomastiaDelhi, gynecomastiaKanpur, gynecomastiaLucknow, liposuctionDelhi, liposuctionGurgaon, liposuctionKanpur, liposuctionLucknow } from "./city-pages";
 
-const unknown: Record<IncludeKey, IncludeState> = {
+const unknown: Partial<Record<IncludeKey, IncludeState>> = {
   surgeon: "unknown", anaesthesia: "unknown", theatre: "unknown", stay: "unknown",
   consumables: "unknown", followups: "unknown", medicines: "unknown",
 };
@@ -90,6 +91,11 @@ const written: Record<string, CityTreatmentPage> = {
   "liposuction/kanpur": liposuctionKanpur,
 };
 
+// Skin and hair topics (Dev B): written city pages are merged in by "treatment/city".
+for (const topic of skinHairTreatments) {
+  for (const p of topic.cityPages) written[`${p.treatmentSlug}/${p.citySlug}`] = p;
+}
+
 export const pages: CityTreatmentPage[] = treatments.flatMap((t) =>
   cities.map((c) => written[`${t.slug}/${c.slug}`] ?? placeholder(t.slug, c.slug)),
 );
@@ -112,6 +118,7 @@ const lipoLine = (position: number, component: string, minInr: number, maxInr: n
 });
 
 export const costs: CostLine[] = [
+  ...skinHairTreatments.flatMap((t) => t.costLines),
   ...gynFees.map(([p, c, n]) => gynLine("gurgaon", p, c, n)),
   ...gynFees.map(([p, c, n]) => gynLine(null, p, c, n)),
   lipoLine(1, "One area, such as the abdomen or the arms", 60000, 80000, "How much fat, and how elastic the skin is"),
