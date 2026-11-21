@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { NavGroup } from "@/content/site";
 import { emit, on } from "@/lib/ui-events";
 import { WhatsAppIcon } from "../ui/WhatsAppButton";
@@ -90,8 +90,11 @@ export function MobileMenu({ groups, whatsappHref }: { groups: NavGroup[]; whats
                 <li key={g.label}>
                   <button type="button" aria-expanded={expanded === i} aria-controls={`m${i}`} onClick={() => setExpanded(expanded === i ? null : i)}>{g.label}</button>
                   <ul id={`m${i}`} hidden={expanded !== i}>
-                    {g.links.map((l) => (
-                      <li key={l.href + l.label}><Link href={l.href} onClick={close}>{l.label}</Link></li>
+                    {g.links.map((l, li) => (
+                      <Fragment key={l.href + l.label}>
+                        {l.group && l.group !== g.links[li - 1]?.group && <li className={styles.gh} role="presentation">{l.group}</li>}
+                        <li><Link href={l.href} onClick={close}>{l.label}</Link></li>
+                      </Fragment>
                     ))}
                   </ul>
                 </li>
