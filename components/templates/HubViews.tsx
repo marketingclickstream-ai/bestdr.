@@ -1,24 +1,25 @@
 import Link from "next/link";
 import type { City, SiteData } from "@/content/types";
 import { isLinkVisible } from "@/lib/pages";
+import { careKindOf, groupByCategory, priceLabelOf } from "@/lib/topic";
 import { breadcrumbList, graph, itemList, organization } from "@/lib/schema";
-import { treatmentRangeText } from "@/lib/view";
+import { inrRange } from "@/lib/format";
 import { Rich } from "../ui/Rich";
 import { SampleChip } from "../ui/SampleChip";
 import { SectionHead } from "../ui/SectionHead";
 import { SimplePage } from "./SimplePage";
 
-/** /plastic-surgery: every treatment page, grouped nowhere, linked once each. */
+/** /plastic-surgery: every plastic surgery page, linked once each. Skin, hair and injectable topics are on /treatments. */
 export function PlasticSurgeryHub({ site }: { site: SiteData }) {
   const crumbs = [{ name: "Home", path: "/" }, { name: "Plastic surgery", path: "/plastic-surgery" }];
-  const shown = site.treatments.filter((t) => isLinkVisible(`/${t.slug}`));
+  const shown = site.treatments.filter((t) => t.category === "surgery" && isLinkVisible(`/${t.slug}`));
   return (
     <SimplePage
       crumbs={crumbs}
       h1="Plastic surgery in India"
       lead="One page per operation: what it is, the price line by line, recovery by week, and the risks to ask about. Pages without a surgeon's review are marked."
       jsonLd={graph(organization(), breadcrumbList(crumbs), itemList("Plastic surgery guides", shown.map((t) => ({ name: t.name, path: `/${t.slug}` }))))}
-      sections={[{ heading: "How we write these pages", paragraphs: ["See our [editorial policy](/editorial-policy) and [how we check surgeons](/how-we-verify-surgeons)."] }]}
+      sections={[{ heading: "How we write these pages", paragraphs: ["See our [editorial policy](/editorial-policy) and [how we check surgeons](/how-we-verify-surgeons).", "Looking for skin, hair or injectable care? See [all treatments](/treatments)."] }]}
       extra={
         <section className="sec tint" id="treatments">
           <SectionHead>Operations</SectionHead>
@@ -40,11 +41,53 @@ export function PlasticSurgeryHub({ site }: { site: SiteData }) {
   );
 }
 
+/** /treatments: skin, hair and injectable topics, grouped by category. Plastic surgery has its own hub. */
+export function TreatmentsHub({ site }: { site: SiteData }) {
+  const crumbs = [{ name: "Home", path: "/" }, { name: "Treatments", path: "/treatments" }];
+  const shown = site.treatments.filter((t) => t.category !== "surgery" && isLinkVisible(`/${t.slug}`));
+  const groups = groupByCategory(shown);
+  return (
+    <SimplePage
+      crumbs={crumbs}
+      h1="Skin, hair and injectable treatments"
+      lead="One page per treatment: what it involves, downtime, risks, who should wait, and what changes the price. Pages without a doctor's review are marked."
+      kind="non-surgical"
+      waMessage="I have a question about a skin or hair treatment"
+      jsonLd={graph(organization(), breadcrumbList(crumbs), itemList("Skin, hair and injectable treatments", shown.map((t) => ({ name: t.name, path: `/${t.slug}` }))))}
+      sections={[{ heading: "How we write these pages", paragraphs: ["See our [editorial policy](/editorial-policy) and [how we check doctors and clinics](/how-we-verify-surgeons).", "Looking for an operation? See [plastic surgery](/plastic-surgery)."] }]}
+      extra={
+        <>
+          {groups.map((g) => (
+            <section className="sec tint" id={g.info.id} key={g.info.id}>
+              <SectionHead>{g.info.label}</SectionHead>
+              <p>{g.info.blurb}</p>
+              <ul className="rr full">
+                {g.items.map((t) => (
+                  <li key={t.slug}>
+                    <div />
+                    <div>
+                      <h3><Link href={`/${t.slug}`}>{t.name}</Link></h3>
+                      <p>{t.summary}</p>
+                      <p className="meta">{t.content ? "Full guide" : <>Being prepared <SampleChip label="Draft" /></>}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </>
+      }
+    />
+  );
+}
+
 /** /plastic-surgery-in-[city]: what is available in the city and links to its treatment pages. */
 export function CityHub({ site, c }: { site: SiteData; c: City }) {
   const path = `/plastic-surgery-in-${c.slug}`;
   const crumbs = [{ name: "Home", path: "/" }, { name: "Plastic surgery", path: "/plastic-surgery" }, { name: `In ${c.name}`, path }];
   const pages = site.pages.filter((p) => p.citySlug === c.slug && isLinkVisible(`/${p.treatmentSlug}-in-${c.slug}`));
+  const withTreatment = pages.flatMap((p) => { const t = site.treatments.find((x) => x.slug === p.treatmentSlug); return t ? [{ p, t, category: t.category }] : []; });
+  const groups = groupByCategory(withTreatment);
   return (
     <SimplePage
       crumbs={crumbs}
@@ -52,27 +95,28 @@ export function CityHub({ site, c }: { site: SiteData; c: City }) {
       lead={c.summary}
       city={c.slug}
       waMessage={`I have a question about plastic surgery in ${c.name}`}
-      jsonLd={graph(organization(), breadcrumbList(crumbs), itemList(`Plastic surgery pages for ${c.name}`, pages.map((p) => ({ name: site.treatments.find((t) => t.slug === p.treatmentSlug)?.name ?? p.treatmentSlug, path: `/${p.treatmentSlug}-in-${c.slug}` }))))}
+      jsonLd={graph(organization(), breadcrumbList(crumbs), itemList(`Treatment pages for ${c.name}`, withTreatment.map(({ p, t }) => ({ name: t.name, path: `/${p.treatmentSlug}-in-${c.slug}` }))))}
       extra={
         <section className="sec tint" id="available">
-          <SectionHead>Operations in {c.name}</SectionHead>
-          {pages.length === 0 ? <p><Rich text={`We have no confirmed place for surgery in ${c.name} yet, and no page for it is ready. The national [cost guides](/cost) and [procedure guides](/plastic-surgery) still apply, and the coordinator can tell you where care would happen.`} /></p> : (
-            <ul className="rr full">
-              {pages.map((p) => {
-                const t = site.treatments.find((x) => x.slug === p.treatmentSlug);
-                if (!t) return null;
-                return (
-                  <li key={t.slug}>
-                    <div />
-                    <div>
-                      <h3><Link href={`/${t.slug}-in-${c.slug}`}>{t.name} in {c.name}</Link></h3>
-                      <p>{treatmentRangeText(p, t.display?.priceLabel)}</p>
-                      <p className="meta">{p.isPlaceholder ? <>Being prepared <SampleChip label="Draft" /></> : <>Price lines, recovery, risks</>}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+          <SectionHead>Operations and treatments in {c.name}</SectionHead>
+          {pages.length === 0 ? <p><Rich text={`We have no confirmed place for care in ${c.name} yet, and no page for it is ready. The national [cost guides](/cost) and [procedure guides](/plastic-surgery) still apply, and the coordinator can tell you where care would happen.`} /></p> : (
+            groups.map((g) => (
+              <div key={g.info.id}>
+                {groups.length > 1 && <h3>{g.info.label}</h3>}
+                <ul className="rr full">
+                  {g.items.map(({ p, t }) => (
+                    <li key={t.slug}>
+                      <div />
+                      <div>
+                        <h3><Link href={`/${t.slug}-in-${c.slug}`}>{t.name} in {c.name}</Link></h3>
+                        <p>{p.price ? `${priceLabelOf(t)}: Rs ${inrRange(p.price.minInr, p.price.maxInr)}${p.price.isSample ? " (to be confirmed)" : ""}` : "Price lines will be added when partner quotes are confirmed."}</p>
+                        <p className="meta">{p.isPlaceholder ? <>Being prepared <SampleChip label="Draft" /></> : <>{careKindOf(t) === "non-surgical" ? "Price lines, downtime, risks" : "Price lines, recovery, risks"}</>}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
           )}
         </section>
       }
